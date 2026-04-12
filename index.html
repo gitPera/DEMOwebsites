@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Projects — Index</title>
+
+  <!-- Playfair Display for headings, DM Sans for UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ─────────────────────────────────── */
+    :root {
+      --bg:        #0d0d0d;
+      --surface:   #161616;
+      --border:    rgba(255,255,255,0.07);
+      --text:      #e8e2d9;
+      --muted:     rgba(232,226,217,0.45);
+      --accent:    #c9974a;       /* warm gold */
+      --accent-2:  #8b5e3c;       /* deep amber */
+
+      --ff-head: 'Playfair Display', Georgia, serif;
+      --ff-ui:   'DM Sans', system-ui, sans-serif;
+      --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ── RESET ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--ff-ui);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle noise grain */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── BACKGROUND GLOW ────────────────────────── */
+    .bg-glow {
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 60vh;
+      background: radial-gradient(ellipse at center,
+        rgba(201, 151, 74, 0.08) 0%,
+        transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────── */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin-inline: auto;
+      padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 5vw, 3rem);
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: clamp(3rem, 6vw, 5rem);
+      animation: fadeUp 0.9s var(--ease) both;
+    }
+
+    .eyebrow {
+      font-family: var(--ff-ui);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      width: 2rem; height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    h1 {
+      font-family: var(--ff-head);
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--muted);
+      max-width: 42ch;
+      margin-inline: auto;
+      line-height: 1.75;
+    }
+
+    /* ── DIVIDER ─────────────────────────────────── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 0 auto 3rem;
+      max-width: 8rem;
+      opacity: 0.3;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--accent);
+    }
+    .divider span { color: var(--accent); font-size: 0.6rem; }
+
+    /* ── CARDS GRID ─────────────────────────────── */
+    .grid {
+      display: grid;
+      /* 2 columns on desktop, 1 on mobile */
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── CARD ───────────────────────────────────── */
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+
+      /* Staggered entrance */
+      opacity: 0;
+      transform: translateY(28px);
+      animation: fadeUp 0.7s var(--ease) both;
+    }
+    .card:nth-child(1) { animation-delay: 0.15s; }
+    .card:nth-child(2) { animation-delay: 0.25s; }
+    .card:nth-child(3) { animation-delay: 0.35s; }
+    .card:nth-child(4) { animation-delay: 0.45s; }
+
+    /* Hover state */
+    .card:hover {
+      border-color: rgba(201,151,74,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5),
+                  0 0 0 1px rgba(201,151,74,0.15);
+      transition: transform 0.4s var(--spring),
+                  box-shadow 0.4s var(--ease),
+                  border-color 0.3s;
+    }
+    .card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    /* Shimmer line on hover */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      transform: scaleX(0);
+      transition: transform 0.5s var(--ease);
+    }
+    .card:hover::before { transform: scaleX(1); }
+
+    /* ── CARD IMAGE ─────────────────────────────── */
+    .card-img {
+      aspect-ratio: 16 / 7;
+      overflow: hidden;
+      position: relative;
+      background: #1a1a1a;
+    }
+    .card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s var(--ease), filter 0.5s;
+      filter: brightness(0.85) saturate(0.9);
+    }
+    .card:hover .card-img img {
+      transform: scale(1.06);
+      filter: brightness(0.95) saturate(1.1);
+    }
+
+    /* Category pill over image */
+    .card-tag {
+      position: absolute;
+      top: 0.85rem; left: 0.85rem;
+      padding: 0.3em 0.85em;
+      background: rgba(13,13,13,0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(201,151,74,0.3);
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* Arrow icon in top-right */
+    .card-arrow {
+      position: absolute;
+      top: 0.85rem; right: 0.85rem;
+      width: 2rem; height: 2rem;
+      background: rgba(13,13,13,0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      color: var(--text);
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.3s, transform 0.3s var(--spring);
+    }
+    .card:hover .card-arrow {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ── CARD BODY ──────────────────────────────── */
+    .card-body {
+      padding: 1.5rem 1.75rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 0.5rem;
+    }
+
+    .card-meta {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .card-title {
+      font-family: var(--ff-head);
+      font-size: clamp(1.25rem, 2.5vw, 1.55rem);
+      font-weight: 400;
+      line-height: 1.25;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+    .card:hover .card-title { color: var(--accent); }
+
+    .card-desc {
+      font-size: 0.88rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-link-text {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: gap 0.2s var(--spring);
+    }
+    .card:hover .card-link-text { gap: 0.75rem; }
+
+    /* Tech stack pills */
+    .stack {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .stack-pill {
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.2em 0.6em;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ── FOOTER ─────────────────────────────────── */
+    footer {
+      text-align: center;
+      margin-top: clamp(3rem, 6vw, 5rem);
+      animation: fadeUp 0.7s var(--ease) 0.6s both;
+    }
+    footer p {
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: rgba(232,226,217,0.2);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── ANIMATIONS ──────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 520px) {
+      .card-img { aspect-ratio: 16/8; }
+      .card-body { padding: 1.25rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .card { opacity: 1; transform: none; }
+      header { animation: none; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background ambient glow -->
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <div class="wrapper">
+
+    <!-- ── HEADER ───────────────────────────────── -->
+    <header>
+      <p class="eyebrow">My Projects</p>
+      <h1>A collection of <em>crafted</em> work</h1>
+      <p class="subtitle">Hand-built websites and digital experiences. Click any card to open the project.</p>
+    </header>
+
+    <div class="divider" aria-hidden="true"><span>✦</span></div>
+
+    <!-- ── CARDS GRID ────────────────────────────── -->
+    <main>
+      <div class="grid" role="list">
+
+        <!-- ── CARD 1 — Home ─────────────────────── -->
+        <a href="caffè-artigianale.html#home"
+           class="card"
+           role="listitem"
+           aria-label="Visit Torrefazione Mori — Home section">
+          <div class="card-img">
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=900&auto=format&fit=crop&q=80"
+                 alt="Dark roasted coffee beans close-up — hero section preview" />
+            <span class="card-tag">Home</span>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </div>
+          <div class="card-body">
+            <p class="card-meta">Section 01 · Hero</p>
+            <h2 class="card-title">Torrefazione Mori — <em>Homepage</em></h2>
+            <p class="card-desc">
+              The full-screen hero with a split layout, animated headline, overlapping accent image,
+              vintage year badge, and a fluid image grid telling the brand story through photography.
+            </p>
+            <div class="card-footer">
+              <span class="card-link-text">Open Section <span>→</span></span>
+              <div class="stack">
+                <span class="stack-pill">HTML</span>
+                <span class="stack-pill">CSS</span>
+                <span class="stack-pill">Animation</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- ── CARD 2 — Products ─────────────────── -->
+        <a href="caffè-artigianale.html#products"
+           class="card"
+           role="listitem"
+           aria-label="Visit Torrefazione Mori — Products section">
+          <div class="card-img">
+            <img src="https://images.unsplash.com/photo-1559525839-8bf483750679?w=900&auto=format&fit=crop&q=80"
+                 alt="Artisan coffee packaging — products section preview" />
+            <span class="card-tag">Products</span>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </div>
+          <div class="card-body">
+            <p class="card-meta">Section 02 · Catalogue</p>
+            <h2 class="card-title">Coffee <em>Catalogue</em></h2>
+            <p class="card-desc">
+              Six specialty coffee products displayed in a responsive auto-fill grid. Each card
+              features an origin label, roast badge, tasting notes, price, and smooth hover effects.
+            </p>
+            <div class="card-footer">
+              <span class="card-link-text">Open Section <span>→</span></span>
+              <div class="stack">
+                <span class="stack-pill">CSS Grid</span>
+                <span class="stack-pill">Hover FX</span>
+                <span class="stack-pill">Responsive</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- ── CARD 3 — About ─────────────────────── -->
+        <a href="caffè-artigianale.html#about"
+           class="card"
+           role="listitem"
+           aria-label="Visit Torrefazione Mori — About Us section">
+          <div class="card-img">
+            <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=900&auto=format&fit=crop&q=80"
+                 alt="Artisan roaster at work — about us section preview" />
+            <span class="card-tag">Chi Siamo</span>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </div>
+          <div class="card-body">
+            <p class="card-meta">Section 03 · Team</p>
+            <h2 class="card-title">The <em>Family</em> Behind the Roast</h2>
+            <p class="card-desc">
+              Four team member profiles with sepia-to-colour hover transitions, plus a full
+              split-layout roasting process feature section with numbered steps.
+            </p>
+            <div class="card-footer">
+              <span class="card-link-text">Open Section <span>→</span></span>
+              <div class="stack">
+                <span class="stack-pill">CSS Filter</span>
+                <span class="stack-pill">Intersection Observer</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- ── CARD 4 — Contact ───────────────────── -->
+        <a href="caffè-artigianale.html#contact"
+           class="card"
+           role="listitem"
+           aria-label="Visit Torrefazione Mori — Contact form section">
+          <div class="card-img">
+            <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=900&auto=format&fit=crop&q=80"
+                 alt="Barista preparing a latte art cappuccino — contact section preview" />
+            <span class="card-tag">Contact</span>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </div>
+          <div class="card-body">
+            <p class="card-meta">Section 04 · Contact Form</p>
+            <h2 class="card-title"><em>Get in Touch</em> — Contact Form</h2>
+            <p class="card-desc">
+              A minimal borderless contact form with animated underline inputs, inline JS validation,
+              decorative corner borders, and a smooth success-state reveal on submission.
+            </p>
+            <div class="card-footer">
+              <span class="card-link-text">Open Section <span>→</span></span>
+              <div class="stack">
+                <span class="stack-pill">Form UX</span>
+                <span class="stack-pill">JS Validation</span>
+                <span class="stack-pill">A11y</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+      </div><!-- / .grid -->
+    </main>
+
+    <!-- ── FOOTER ─────────────────────────────────── -->
+    <footer>
+      <p>Both files must be in the same folder for links to work · Built with HTML, CSS & vanilla JS</p>
+    </footer>
+
+  </div><!-- / .wrapper -->
+
+</body>
+</html>

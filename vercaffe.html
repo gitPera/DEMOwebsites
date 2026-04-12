@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Torrefazione Famiglia Mori — Artigiani del Caffè dal 1962</title>
+  <meta name="description" content="Torrefazione artigianale di famiglia. Selezioniamo, tostiamo e serviamo caffè straordinari dal 1962." />
+
+  <!-- =============================================
+       GOOGLE FONTS — Cormorant Garamond (display)
+       + Crimson Pro (body) for an editorial,
+       warm-luxury feel befitting Italian artisans.
+  ============================================= -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================
+       CSS CUSTOM PROPERTIES — Design tokens
+       Warm, earthy coffee palette
+    ========================================= */
+    :root {
+      --espresso:    #1a0f0a;   /* Deep espresso black */
+      --roast:       #3d1c0e;   /* Dark roast brown */
+      --mahogany:    #6b3322;   /* Medium roast */
+      --caramel:     #b06c3a;   /* Caramel accent */
+      --cream:       #f5ede2;   /* Creamy off-white */
+      --latte:       #e8d5be;   /* Latte warm neutral */
+      --parchment:   #f9f4ec;   /* Parchment background */
+      --gold:        #c9974a;   /* Gold highlight */
+      --sage:        #7a8c6e;   /* Earthy sage green */
+
+      --ff-display: 'Cormorant Garamond', Georgia, serif;
+      --ff-body:    'Crimson Pro', Georgia, serif;
+
+      --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      --container-max: 1240px;
+      --section-pad: clamp(4rem, 8vw, 7rem);
+    }
+
+    /* =========================================
+       CSS RESET & BASE
+    ========================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 18px;
+    }
+
+    body {
+      font-family: var(--ff-body);
+      background-color: var(--parchment);
+      color: var(--espresso);
+      overflow-x: hidden;
+      /* Subtle grain texture overlay via pseudo-element on html */
+    }
+
+    /* Grain texture on body */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* =========================================
+       SCROLL ANIMATION — Intersection Observer
+       adds .is-visible when element enters view
+    ========================================= */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s var(--ease-smooth),
+                  transform 0.8s var(--ease-smooth);
+    }
+    .reveal.from-left  { transform: translateX(-50px); }
+    .reveal.from-right { transform: translateX(50px); }
+    .reveal.scale-up   { transform: scale(0.93); }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Stagger children */
+    .stagger > * { opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s var(--ease-smooth), transform 0.7s var(--ease-smooth); }
+    .stagger.is-visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:.05s }
+    .stagger.is-visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:.15s }
+    .stagger.is-visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:.25s }
+    .stagger.is-visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:.35s }
+    .stagger.is-visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:.45s }
+    .stagger.is-visible > *:nth-child(6) { opacity:1; transform:none; transition-delay:.55s }
+
+    /* =========================================
+       UTILITY CLASSES
+    ========================================= */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: clamp(1.25rem, 5vw, 3rem);
+    }
+
+    .section-label {
+      font-family: var(--ff-body);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 2rem;
+      height: 1px;
+      background: var(--caramel);
+    }
+
+    .display-heading {
+      font-family: var(--ff-display);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85em 2em;
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid currentColor;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, transform 0.2s var(--ease-spring);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--caramel);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s var(--ease-smooth);
+      z-index: -1;
+    }
+    .btn:hover::after { transform: scaleX(1); }
+    .btn:hover { color: var(--cream); border-color: var(--caramel); }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-dark {
+      background: var(--espresso);
+      color: var(--cream);
+      border-color: var(--espresso);
+    }
+    .btn-dark::after { background: var(--caramel); }
+    .btn-dark:hover { border-color: var(--caramel); }
+
+    /* =========================================
+       NAVIGATION
+    ========================================= */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.25rem clamp(1.25rem, 5vw, 3rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, box-shadow 0.4s, padding 0.3s;
+    }
+
+    /* Nav becomes opaque on scroll (via JS) */
+    .nav.scrolled {
+      background: rgba(249, 244, 236, 0.96);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(61, 28, 14, 0.1);
+      padding-top: 0.8rem;
+      padding-bottom: 0.8rem;
+    }
+
+    .nav-logo {
+      font-family: var(--ff-display);
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-weight: 600;
+      color: var(--espresso);
+      line-height: 1.1;
+    }
+    .nav-logo span {
+      display: block;
+      font-size: 0.55em;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--caramel);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+      align-items: center;
+    }
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--roast);
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--caramel);
+      transition: width 0.3s var(--ease-smooth);
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* Hamburger (mobile) */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px; height: 1.5px;
+      background: var(--espresso);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile nav menu */
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--parchment);
+      z-index: 99;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+    }
+    .nav-mobile.open { display: flex; }
+    .nav-mobile a {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      font-weight: 300;
+      color: var(--espresso);
+      letter-spacing: -0.01em;
+    }
+    .nav-mobile a:hover { color: var(--caramel); }
+
+    /* =========================================
+       HERO SECTION
+    ========================================= */
+    #home {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+      overflow: hidden;
+    }
+
+    /* Left half — text */
+    .hero-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: clamp(2rem, 6vw, 5rem) clamp(1.5rem, 4vw, 4rem) clamp(3rem, 6vw, 5rem);
+      padding-top: 8rem;
+      background: var(--parchment);
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--ff-body);
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-smooth) 0.3s forwards;
+    }
+    .hero-eyebrow::before {
+      content: '—';
+      color: var(--caramel);
+    }
+
+    .hero-title {
+      font-family: var(--ff-display);
+      font-size: clamp(3rem, 6vw, 6rem);
+      font-weight: 300;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+      color: var(--espresso);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-smooth) 0.5s forwards;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--mahogany);
+    }
+
+    .hero-body {
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--roast);
+      max-width: 38ch;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-smooth) 0.7s forwards;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-smooth) 0.9s forwards;
+    }
+
+    /* Right half — image grid */
+    .hero-images {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-images .img-main {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      animation: heroImgReveal 1.2s var(--ease-smooth) 0.2s forwards;
+    }
+
+    /* Small floating accent image */
+    .hero-images .img-accent {
+      position: absolute;
+      bottom: 2.5rem;
+      left: -2.5rem;
+      width: 55%;
+      aspect-ratio: 4/3;
+      box-shadow: 0 20px 60px rgba(26, 15, 10, 0.3);
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-smooth) 1s forwards;
+      z-index: 3;
+    }
+
+    /* Year badge */
+    .hero-badge {
+      position: absolute;
+      top: 3rem;
+      right: 2rem;
+      width: 6rem;
+      height: 6rem;
+      background: var(--espresso);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--latte);
+      z-index: 4;
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-smooth) 1.2s forwards;
+    }
+    .hero-badge strong { font-family: var(--ff-display); font-size: 1.4rem; font-weight: 600; line-height: 1; }
+    .hero-badge small  { font-family: var(--ff-body); font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 2px; }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--ff-body);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mahogany);
+      opacity: 0;
+      animation: fadeSlideUp 1s 1.5s forwards;
+      z-index: 5;
+    }
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 3rem;
+      background: linear-gradient(to bottom, var(--mahogany), transparent);
+      animation: scrollLine 1.5s ease-in-out infinite;
+    }
+
+    /* =========================================
+       HOME — INTRO BAND
+    ========================================= */
+    .intro-band {
+      background: var(--espresso);
+      color: var(--latte);
+      padding: clamp(3rem, 5vw, 4rem) 0;
+      overflow: hidden;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 3rem;
+      width: max-content;
+      animation: marquee 20s linear infinite;
+    }
+    .marquee-track span {
+      font-family: var(--ff-display);
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      font-weight: 300;
+      font-style: italic;
+      white-space: nowrap;
+      color: var(--latte);
+      opacity: 0.7;
+    }
+    .marquee-track span.dot {
+      font-style: normal;
+      color: var(--gold);
+      font-size: 0.8em;
+      opacity: 1;
+      align-self: center;
+    }
+
+    /* =========================================
+       HOME — IMAGE GRID (fluid overlapping)
+    ========================================= */
+    .home-grid-section {
+      padding: var(--section-pad) 0;
+      background: var(--cream);
+    }
+
+    .home-grid-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: end;
+      margin-bottom: clamp(3rem, 5vw, 4rem);
+    }
+
+    .home-grid-heading {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+    }
+
+    .home-grid-text {
+      font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--roast);
+    }
+
+    /* The fluid overlapping image grid */
+    .fluid-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto;
+      gap: 1rem;
+    }
+
+    .fluid-grid .gi-1 { grid-column: 1 / 7; grid-row: 1 / 3; aspect-ratio: 4/5; }
+    .fluid-grid .gi-2 { grid-column: 7 / 10; grid-row: 1 / 2; aspect-ratio: 1; }
+    .fluid-grid .gi-3 { grid-column: 10 / 13; grid-row: 1 / 2; aspect-ratio: 1; }
+    .fluid-grid .gi-4 { grid-column: 7 / 11; grid-row: 2 / 3; aspect-ratio: 4/3; }
+    .fluid-grid .gi-5 { grid-column: 11 / 13; grid-row: 2 / 3; aspect-ratio: 2/3; }
+
+    .fluid-grid-item {
+      overflow: hidden;
+      position: relative;
+    }
+    .fluid-grid-item img {
+      transition: transform 0.8s var(--ease-smooth);
+    }
+    .fluid-grid-item:hover img { transform: scale(1.05); }
+
+    /* Caption overlay on hover */
+    .fluid-grid-item .caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1.5rem;
+      background: linear-gradient(transparent, rgba(26,15,10,0.7));
+      color: var(--cream);
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-style: italic;
+      font-weight: 300;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .fluid-grid-item:hover .caption { opacity: 1; transform: translateY(0); }
+
+    /* =========================================
+       PRODUCTS SECTION
+    ========================================= */
+    #products {
+      padding: var(--section-pad) 0;
+      background: var(--parchment);
+    }
+
+    .products-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: clamp(3rem, 5vw, 4rem);
+    }
+
+    .products-heading {
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.08;
+      max-width: 18ch;
+    }
+
+    .products-subtext {
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--roast);
+      max-width: 34ch;
+    }
+
+    /* Responsive product grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+      gap: clamp(1rem, 2vw, 1.5rem);
+    }
+
+    .product-card {
+      background: var(--cream);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.4s var(--ease-spring),
+                  box-shadow 0.4s var(--ease-smooth);
+    }
+    .product-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 24px 60px rgba(26, 15, 10, 0.15);
+    }
+
+    .product-img {
+      aspect-ratio: 3/2;
+      overflow: hidden;
+      position: relative;
+    }
+    .product-img img {
+      transition: transform 0.7s var(--ease-smooth);
+    }
+    .product-card:hover .product-img img { transform: scale(1.08); }
+
+    /* Roast level badge */
+    .roast-badge {
+      position: absolute;
+      top: 0.75rem; right: 0.75rem;
+      padding: 0.3em 0.8em;
+      font-family: var(--ff-body);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--espresso);
+      color: var(--latte);
+    }
+
+    .product-info {
+      padding: 1.4rem 1.5rem 1.75rem;
+    }
+
+    .product-origin {
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      margin-bottom: 0.4rem;
+    }
+
+    .product-name {
+      font-family: var(--ff-display);
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--espresso);
+      margin-bottom: 0.6rem;
+    }
+
+    .product-desc {
+      font-size: 0.88rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--roast);
+      margin-bottom: 1.2rem;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .product-price {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--mahogany);
+    }
+
+    .product-notes {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .note-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2em 0.6em;
+      border: 1px solid var(--latte);
+      color: var(--mahogany);
+      background: var(--latte);
+    }
+
+    /* =========================================
+       ROASTING PROCESS — Full-bleed feature
+    ========================================= */
+    .process-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 70vh;
+    }
+
+    .process-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .process-text {
+      background: var(--roast);
+      color: var(--latte);
+      padding: clamp(3rem, 6vw, 6rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .process-text .section-label { color: var(--gold); }
+    .process-text .section-label::before { background: var(--gold); }
+
+    .process-heading {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--cream);
+      margin-bottom: 1.5rem;
+    }
+
+    .process-body {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.85;
+      color: rgba(232, 213, 190, 0.8);
+      margin-bottom: 2rem;
+    }
+
+    .process-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .step-num {
+      font-family: var(--ff-display);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      min-width: 2rem;
+    }
+    .step-content h4 {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 0.2rem;
+    }
+    .step-content p {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: rgba(232,213,190,0.7);
+      line-height: 1.6;
+    }
+
+    /* =========================================
+       ABOUT US / CHI SIAMO
+    ========================================= */
+    #about {
+      padding: var(--section-pad) 0;
+      background: var(--parchment);
+    }
+
+    .about-header {
+      text-align: center;
+      max-width: 60ch;
+      margin-inline: auto;
+      margin-bottom: clamp(3rem, 6vw, 5rem);
+    }
+
+    .about-heading {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 1.25rem;
+    }
+
+    .about-intro {
+      font-size: clamp(1rem, 1.5vw, 1.1rem);
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--roast);
+    }
+
+    /* Horizontal rule ornament */
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      justify-content: center;
+    }
+    .ornament::before, .ornament::after {
+      content: '';
+      flex: 1;
+      max-width: 4rem;
+      height: 1px;
+      background: var(--caramel);
+    }
+    .ornament span {
+      color: var(--caramel);
+      font-size: 1rem;
+    }
+
+    /* Team grid */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+      margin-bottom: clamp(4rem, 7vw, 6rem);
+    }
+
+    .team-member {
+      text-align: center;
+    }
+
+    .team-photo {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+    .team-photo img { transition: transform 0.7s var(--ease-smooth); }
+    .team-member:hover .team-photo img { transform: scale(1.05); }
+
+    /* Sepia tint on team photos */
+    .team-photo img { filter: sepia(20%) contrast(1.05); }
+    .team-member:hover .team-photo img { filter: sepia(0%) contrast(1.05); }
+
+    .team-name {
+      font-family: var(--ff-display);
+      font-size: clamp(1.2rem, 2vw, 1.5rem);
+      font-weight: 400;
+      color: var(--espresso);
+      margin-bottom: 0.25rem;
+    }
+
+    .team-role {
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      margin-bottom: 0.75rem;
+    }
+
+    .team-bio {
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--roast);
+    }
+
+    /* =========================================
+       CONTACT FORM
+    ========================================= */
+    .contact-section {
+      background: var(--cream);
+      padding: clamp(3rem, 6vw, 5rem);
+      max-width: 640px;
+      margin-inline: auto;
+      position: relative;
+    }
+
+    /* Decorative corner */
+    .contact-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3rem; height: 3rem;
+      border-top: 2px solid var(--caramel);
+      border-left: 2px solid var(--caramel);
+    }
+    .contact-section::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 3rem; height: 3rem;
+      border-bottom: 2px solid var(--caramel);
+      border-right: 2px solid var(--caramel);
+    }
+
+    .contact-heading {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--espresso);
+      margin-bottom: 0.5rem;
+    }
+    .contact-subtext {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--roast);
+      margin-bottom: 2.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--latte);
+      padding: 0.6rem 0;
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--espresso);
+      transition: border-color 0.3s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus { border-bottom-color: var(--caramel); }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 6rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .form-submit {
+      margin-top: 2rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Success message (hidden by default) */
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+    }
+    .form-success.show { display: block; }
+    .form-success p {
+      font-family: var(--ff-display);
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--mahogany);
+    }
+
+    /* =========================================
+       FOOTER
+    ========================================= */
+    footer {
+      background: var(--espresso);
+      color: var(--latte);
+      padding: clamp(3rem, 5vw, 4rem) 0 1.5rem;
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: clamp(2rem, 4vw, 4rem);
+      padding-bottom: clamp(2rem, 4vw, 3rem);
+      border-bottom: 1px solid rgba(232,213,190,0.12);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-brand .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .footer-brand .footer-logo small {
+      display: block;
+      font-size: 0.55em;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .footer-brand p {
+      font-size: 0.88rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(232,213,190,0.6);
+      max-width: 30ch;
+      margin-top: 1rem;
+    }
+
+    .footer-col h5 {
+      font-family: var(--ff-body);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-col ul { display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-col ul a {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: rgba(232,213,190,0.65);
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--cream); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .footer-bottom p {
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: rgba(232,213,190,0.35);
+    }
+
+    /* =========================================
+       KEYFRAME ANIMATIONS
+    ========================================= */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes heroImgReveal {
+      from { opacity: 0; transform: scale(1.05); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes scrollLine {
+      0%   { transform: scaleY(0); transform-origin: top; opacity: 1; }
+      50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* =========================================
+       RESPONSIVE BREAKPOINTS
+    ========================================= */
+
+    /* Tablet */
+    @media (max-width: 900px) {
+      #home {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+      }
+      .hero-text {
+        padding-top: 7rem;
+        order: 2;
+      }
+      .hero-images {
+        height: 55vw;
+        order: 1;
+      }
+      .hero-images .img-accent { display: none; }
+
+      .home-grid-header { grid-template-columns: 1fr; }
+      .home-grid-text { max-width: 56ch; }
+
+      .fluid-grid .gi-1 { grid-column: 1 / 8; }
+      .fluid-grid .gi-2 { grid-column: 8 / 13; }
+      .fluid-grid .gi-3 { display: none; }
+      .fluid-grid .gi-4 { grid-column: 1 / 8; grid-row: 2; }
+      .fluid-grid .gi-5 { grid-column: 8 / 13; grid-row: 2; }
+
+      .process-section { grid-template-columns: 1fr; }
+      .process-image { height: 50vw; }
+
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      html { font-size: 16px; }
+
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+
+      .hero-images { height: 70vw; }
+      .scroll-hint { display: none; }
+
+      .fluid-grid .gi-1 { grid-column: 1 / -1; }
+      .fluid-grid .gi-2 { grid-column: 1 / 7; }
+      .fluid-grid .gi-3 { display: block; grid-column: 7 / -1; }
+      .fluid-grid .gi-4 { grid-column: 1 / -1; grid-row: 3; }
+      .fluid-grid .gi-5 { display: none; }
+
+      .products-header { flex-direction: column; align-items: flex-start; }
+
+      .form-row { grid-template-columns: 1fr; }
+
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-brand { grid-column: auto; }
+
+      .process-text { padding: 2.5rem 1.5rem; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =============================================
+       NAVIGATION
+  ============================================= -->
+  <nav class="nav" id="mainNav" role="navigation" aria-label="Navigazione principale">
+    <a href="#home" class="nav-logo" aria-label="Torrefazione Mori — Torna alla home">
+      Torrefazione Mori
+      <span>Artigiani del Caffè</span>
+    </a>
+
+    <!-- Desktop links -->
+    <ul class="nav-links" role="list">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#products">Prodotti</a></li>
+      <li><a href="#about">Chi Siamo</a></li>
+      <li><a href="#contact" class="btn btn-dark">Contattaci</a></li>
+    </ul>
+
+    <!-- Hamburger button (mobile) -->
+    <button class="nav-toggle" id="navToggle" aria-label="Apri menu" aria-expanded="false" aria-controls="navMobile">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile menu overlay -->
+  <div class="nav-mobile" id="navMobile" role="dialog" aria-modal="true" aria-label="Menu mobile">
+    <a href="#home"     onclick="closeMenu()">Home</a>
+    <a href="#products" onclick="closeMenu()">Prodotti</a>
+    <a href="#about"    onclick="closeMenu()">Chi Siamo</a>
+    <a href="#contact"  onclick="closeMenu()">Contattaci</a>
+  </div>
+
+  <!-- =============================================
+       HOME SECTION
+  ============================================= -->
+  <section id="home" aria-label="Home — Torrefazione Famiglia Mori">
+
+    <!-- Left: headline text -->
+    <div class="hero-text">
+      <p class="hero-eyebrow">Torrefazione Artigianale dal 1962</p>
+
+      <h1 class="hero-title display-heading">
+        Il <em>sapore</em><br>
+        di tre<br>
+        generazioni
+      </h1>
+
+      <p class="hero-body">
+        Siamo una famiglia di torrefatori appassionati. Selezioniamo i migliori
+        chicchi di caffè da tutto il mondo, li tostiamo con cura artigianale e
+        li trasformiamo in esperienze straordinarie per la tua tazza.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#products" class="btn btn-dark">Scopri i Prodotti</a>
+        <a href="#about" class="btn">La Nostra Storia</a>
+      </div>
+    </div>
+
+    <!-- Right: images -->
+    <div class="hero-images">
+      <!-- Main full-bleed image -->
+      <div class="img-main">
+        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&auto=format&fit=crop&q=80"
+             alt="Chicchi di caffè torrefatti artigianalmente su una superficie scura" />
+      </div>
+
+      <!-- Overlapping smaller image -->
+      <div class="img-accent">
+        <img src="https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=700&auto=format&fit=crop&q=80"
+             alt="Mani artigiane che selezionano chicchi di caffè di alta qualità" />
+      </div>
+
+      <!-- Year badge -->
+      <div class="hero-badge" aria-label="Dal 1962">
+        <strong>1962</strong>
+        <small>dal</small>
+      </div>
+    </div>
+
+    <!-- Scroll hint indicator -->
+    <div class="scroll-hint" aria-hidden="true">
+      <span>Scorri</span>
+    </div>
+
+  </section><!-- / #home -->
+
+  <!-- =============================================
+       MARQUEE BAND
+  ============================================= -->
+  <div class="intro-band" aria-hidden="true">
+    <div style="overflow:hidden;">
+      <div class="marquee-track">
+        <!-- Duplicated to create infinite loop -->
+        <span>Arabica di Specialty</span><span class="dot">✦</span>
+        <span>Tostatura Artigianale</span><span class="dot">✦</span>
+        <span>Tre Generazioni</span><span class="dot">✦</span>
+        <span>Origine Controllata</span><span class="dot">✦</span>
+        <span>Passione dal 1962</span><span class="dot">✦</span>
+        <span>Selezione Manuale</span><span class="dot">✦</span>
+        <!-- Duplicate set -->
+        <span>Arabica di Specialty</span><span class="dot">✦</span>
+        <span>Tostatura Artigianale</span><span class="dot">✦</span>
+        <span>Tre Generazioni</span><span class="dot">✦</span>
+        <span>Origine Controllata</span><span class="dot">✦</span>
+        <span>Passione dal 1962</span><span class="dot">✦</span>
+        <span>Selezione Manuale</span><span class="dot">✦</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       HOME — IMAGE GRID
+  ============================================= -->
+  <section class="home-grid-section" aria-label="La nostra storia in immagini">
+    <div class="container">
+
+      <div class="home-grid-header">
+        <div class="reveal from-left">
+          <p class="section-label">La Nostra Essenza</p>
+          <h2 class="home-grid-heading display-heading">
+            Ogni chicco<br>
+            racconta<br>
+            una <em>storia</em>
+          </h2>
+        </div>
+        <p class="home-grid-text reveal from-right">
+          Dalla piantagione alla tazzina, curiamo ogni fase del processo con
+          dedizione assoluta. I nostri maestri torrefattori lavorano ogni lotto
+          a mano, rispettando i tempi della natura e le tradizioni di famiglia
+          che ci sono state tramandate per oltre sessant'anni.
+        </p>
+      </div>
+
+      <!-- Fluid overlapping image grid -->
+      <div class="fluid-grid stagger" aria-label="Galleria fotografica della torrefazione">
+
+        <figure class="fluid-grid-item gi-1 reveal scale-up">
+          <img src="https://images.unsplash.com/photo-1610889556528-9a770e32642f?w=900&auto=format&fit=crop&q=80"
+               alt="Vista ravvicinata di chicchi di caffè arabica tostati con cura" />
+          <figcaption class="caption">I nostri Arabica</figcaption>
+        </figure>
+
+        <figure class="fluid-grid-item gi-2 reveal">
+          <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80"
+               alt="Tazza di caffè espresso con crema perfetta in un bar artigianale" />
+          <figcaption class="caption">L'Espresso Perfetto</figcaption>
+        </figure>
+
+        <figure class="fluid-grid-item gi-3 reveal">
+          <img src="https://images.unsplash.com/photo-1572119865084-43c285814d63?w=600&auto=format&fit=crop&q=80"
+               alt="Attrezzatura professionale per la tostatura del caffè artigianale" />
+          <figcaption class="caption">L'Arte della Tostatura</figcaption>
+        </figure>
+
+        <figure class="fluid-grid-item gi-4 reveal from-left">
+          <img src="https://images.unsplash.com/photo-1507915135761-41a0a55c21c5?w=900&auto=format&fit=crop&q=80"
+               alt="Piantagione di caffè con piante verdi rigogliose all'alba" />
+          <figcaption class="caption">Origine Controllata</figcaption>
+        </figure>
+
+        <figure class="fluid-grid-item gi-5 reveal from-right">
+          <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=500&auto=format&fit=crop&q=80"
+               alt="Latte art su un cappuccino preparato da un barista esperto" />
+          <figcaption class="caption">Arte nel Latte</figcaption>
+        </figure>
+
+      </div><!-- / .fluid-grid -->
+
+    </div>
+  </section><!-- / .home-grid-section -->
+
+  <!-- =============================================
+       PRODUCTS SECTION
+  ============================================= -->
+  <section id="products" aria-label="I nostri prodotti di caffè artigianale">
+    <div class="container">
+
+      <div class="products-header">
+        <div class="reveal from-left">
+          <p class="section-label">La Nostra Selezione</p>
+          <h2 class="products-heading display-heading">
+            Caffeina<br>
+            per <em>l'anima</em>
+          </h2>
+        </div>
+        <p class="products-subtext reveal from-right">
+          Ogni miscela e ogni singola origine è stata studiata e perfezionata
+          nel tempo, bilanciando acidità, corpo e aroma per offrire
+          un'esperienza sensoriale irripetibile.
+        </p>
+      </div>
+
+      <!-- Product cards grid (6 products) -->
+      <div class="products-grid stagger" role="list">
+
+        <!-- Product 1 -->
+        <article class="product-card" role="listitem">
+          <div class="product-img">
+            <img src="https://images.unsplash.com/photo-1559525839-8bf483750679?w=600&auto=format&fit=crop&q=80"
+                 alt="Sacchetto di caffè Oro Nero, miscela espresso di punta della Torrefazione Mori" />
+            <span class="roast-badge">Tostatura Scura</span>
+          </div>
+          <div class="product-info">
+            <p class="product-origin">Brasile · Ethiopia</p>
+            <h3 class="product-name">Oro Nero</h3>
+            <p class="product-desc">La nostra miscela di punta. Corpo pieno, crema persistente e note di cioccolato fondente con un finale speziato.</p>
+            <div class="product-footer">
+              <span class="product-price">€14,50</span>
+              <div class="product-notes">
+                <span class="note-tag">Cioccolato</span>
+                <span class="note-tag">Spezie</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 2 -->
+        <article class="product-card" role="listitem">
+          <div class="product-img">
+            <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=600&auto=format&fit=crop&q=80"
+                 alt="Caffè single origin dall'Etiopia con chicchi verdi e tostati in mostra" />
+            <span class="roast-badge">Tostatura Media</span>
+          </div>
+          <div class="product-info">
+            <p class="product-origin">Yirgacheffe · Ethiopia</p>
+            <h3 class="product-name">Etiopica Aurora</h3>
+            <p class="product-desc">Single origin dall'altopiano di Yirgacheffe. Floreale, agrumato, con note di bergamotto e fiori d'arancio.</p>
+            <div class="product-footer">
+              <span class="product-price">€17,00</span>
+              <div class="product-notes">
+                <span class="note-tag">Bergamotto</span>
+                <span class="note-tag">Floreale</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 3 -->
+        <article class="product-card" role="listitem">
+          <div class="product-img">
+            <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop&q=80"
+                 alt="Tazza di caffè preparato con metodo pour-over per esaltare le note fruttate" />
+            <span class="roast-badge">Tostatura Chiara</span>
+          </div>
+          <div class="product-info">
+            <p class="product-origin">Huila · Colombia</p>
+            <h3 class="product-name">Colombiano Luz</h3>
+            <p class="product-desc">Leggero e luminoso. Acidità bilanciata, note di frutta rossa, caramello e mandorla. Perfetto per il pour-over.</p>
+            <div class="product-footer">
+              <span class="product-price">€16,00</span>
+              <div class="product-notes">
+                <span class="note-tag">Frutti rossi</span>
+                <span class="note-tag">Caramello</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 4 -->
+        <article class="product-card" role="listitem">
+          <div class="product-img">
+            <img src="https://images.unsplash.com/photo-1505275350441-83dcda8eeef5?w=600&auto=format&fit=crop&q=80"
+                 alt="Tostatura artigianale di chicchi di caffè Bourbon in un torrefattore a tamburo" />
+            <span class="roast-badge">Tostatura Media</span>
+          </div>
+          <div class="product-info">
+            <p class="product-origin">Bourbon · Rwanda</p>
+            <h3 class="product-name">Ruanda Terroir</h3>
+            <p class="product-desc">Varietà Bourbon dei vulcani ruandesi. Dolce e pulito, con sfumature di pesca bianca, vaniglia e tè nero.</p>
+            <div class="product-footer">
+              <span class="product-price">€18,50</span>
+              <div class="product-notes">
+                <span class="note-tag">Pesca</span>
+                <span class="note-tag">Vaniglia</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 5 -->
+        <article class="product-card" role="listitem">
+          <div class="product-img">
+            <img src="https://images.unsplash.com/photo-1504630083234-14187a9df0f5?w=600&auto=format&fit=crop&q=80"
+                 alt="Caffè macinato fresco in un contenitore di vetro con barattolo vintage" />
+            <span class="roast-badge">Tostatura Scura</span>
+          </div>
+          <div class="product-info">
+            <p class="product-origin">Sumatra · Indonesia</p>
+            <h3 class="product-name">Sumatra Vulcano</h3>
+            <p class="product-desc">Terroso e intenso. Note di tabacco dolce, cedro e cacao. Un caffè per veri intenditori dal carattere inconfondibile.</p>
+            <div class="product-footer">
+              <span class="product-price">€15,50</span>
+              <div class="product-notes">
+                <span class="note-tag">Tabacco</span>
+                <span class="note-tag">Cacao</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 6 -->
+        <article class="product-card" role="listitem">
+          <div class="product-img">
+            <img src="https://images.unsplash.com/photo-1547819539-fb4e616f4a0b?w=600&auto=format&fit=crop&q=80"
+                 alt="Miscela di caffè biologico biologicamente certificata con sacchetto marrone" />
+            <span class="roast-badge">Tostatura Media</span>
+          </div>
+          <div class="product-info">
+            <p class="product-origin">Miscela · BIO Certificato</p>
+            <h3 class="product-name">Familia Bio</h3>
+            <p class="product-desc">La nostra miscela biologica dedicata alla famiglia. Dolce, rotonda e senza acidità, adatta a tutta la giornata.</p>
+            <div class="product-footer">
+              <span class="product-price">€13,00</span>
+              <div class="product-notes">
+                <span class="note-tag">Dolce</span>
+                <span class="note-tag">BIO</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- / .products-grid -->
+
+    </div>
+  </section><!-- / #products -->
+
+  <!-- =============================================
+       ROASTING PROCESS — Split feature section
+  ============================================= -->
+  <section class="process-section" aria-label="Il nostro processo di tostatura">
+
+    <!-- Image side -->
+    <div class="process-image reveal scale-up">
+      <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=900&auto=format&fit=crop&q=80"
+           alt="Tostatore artigianale al lavoro con un torrefattore professionale a fuoco vivo" />
+    </div>
+
+    <!-- Text side -->
+    <div class="process-text">
+      <p class="section-label reveal">Il Processo</p>
+      <h2 class="process-heading display-heading reveal">
+        L'arte della<br>
+        <em>tostatura</em><br>
+        perfetta
+      </h2>
+      <p class="process-body reveal">
+        Non esistono scorciatoie nella vera torrefazione artigianale.
+        Ogni lotto è monitorato a mano, chicco per chicco, per garantire
+        il profilo di tostatura che meglio esalta l'unicità di ogni origine.
+      </p>
+
+      <div class="process-steps stagger">
+        <div class="step">
+          <span class="step-num">01</span>
+          <div class="step-content">
+            <h4>Selezione dei Chicchi</h4>
+            <p>Visitiamo le piantagioni e scegliamo solo lotti specialty con punteggi SCA superiori a 85.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <div class="step-content">
+            <h4>Profilo di Tostatura</h4>
+            <p>Ogni origine riceve un profilo su misura, sviluppato nel corso di settimane di assaggi e perfezionamenti.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <div class="step-content">
+            <h4>Raffreddamento &amp; Riposo</h4>
+            <p>Dopo la tostatura, i chicchi riposano 48 ore per degassare e raggiungere la loro espressione aromatica completa.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section><!-- / .process-section -->
+
+  <!-- =============================================
+       ABOUT / CHI SIAMO SECTION
+  ============================================= -->
+  <section id="about" aria-label="Chi siamo — La famiglia Mori">
+    <div class="container">
+
+      <div class="about-header">
+        <p class="section-label reveal" style="justify-content:center">Chi Siamo</p>
+        <h2 class="about-heading display-heading reveal">
+          Una famiglia,<br>
+          una <em>passione</em>
+        </h2>
+        <div class="ornament" aria-hidden="true"><span>✦</span></div>
+        <p class="about-intro reveal">
+          La Torrefazione Mori nasce nel 1962 dall'intuizione di Nonno Giuseppe,
+          che trasformò un piccolo locale di Venezia in un tempio del caffè di qualità.
+          Oggi, tre generazioni dopo, sua figlia Maria e i nipoti Lorenzo e Giulia
+          portano avanti quell'eredità con la stessa cura artigianale.
+        </p>
+      </div>
+
+      <!-- Team grid (4 members) -->
+      <div class="team-grid stagger" aria-label="Il team della Torrefazione Mori">
+
+        <article class="team-member">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=80"
+                 alt="Maria Mori, responsabile della selezione dei caffè e custode delle tradizioni di famiglia" />
+          </div>
+          <h3 class="team-name">Maria Mori</h3>
+          <p class="team-role">Fondatrice &amp; Direttrice</p>
+          <p class="team-bio">Figlia del fondatore Giuseppe, Maria ha ereditato il palato infallibile del padre. Con oltre 40 anni di esperienza, guida la visione della torrefazione.</p>
+        </article>
+
+        <article class="team-member">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80"
+                 alt="Lorenzo Mori, maestro tostatore e responsabile dello sviluppo dei profili di tostatura" />
+          </div>
+          <h3 class="team-name">Lorenzo Mori</h3>
+          <p class="team-role">Maestro Tostatore</p>
+          <p class="team-bio">Nipote di Giuseppe, Lorenzo ha studiato la tostatura in tutto il mondo. I suoi profili sono il risultato di una ricerca ossessiva per la perfezione.</p>
+        </article>
+
+        <article class="team-member">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=80"
+                 alt="Giulia Mori, Q-Grader certificata SCA e responsabile del controllo qualità" />
+          </div>
+          <h3 class="team-name">Giulia Mori</h3>
+          <p class="team-role">Q-Grader &amp; Acquisti</p>
+          <p class="team-bio">Q-Grader certificata SCA, Giulia viaggia nelle origini per selezionare i migliori lotti. Il suo naso è leggendario tra i produttori.</p>
+        </article>
+
+        <article class="team-member">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=500&auto=format&fit=crop&q=80"
+                 alt="Carlo Rossi, barista campione e responsabile della formazione clienti" />
+          </div>
+          <h3 class="team-name">Carlo Rossi</h3>
+          <p class="team-role">Head Barista &amp; Formazione</p>
+          <p class="team-bio">Campione regionale di barismo 2019, Carlo porta la nostra filosofia del caffè direttamente nella tazza, formando i migliori bar d'Italia.</p>
+        </article>
+
+      </div><!-- / .team-grid -->
+
+      <!-- =========================================
+           CONTACT FORM
+      ========================================= -->
+      <div id="contact">
+        <div class="contact-section reveal" aria-label="Modulo di contatto">
+
+          <p class="section-label">Scrivici</p>
+          <h2 class="contact-heading display-heading">
+            Parliamo di <em>caffè</em>
+          </h2>
+          <p class="contact-subtext">
+            Sei un ristoratore, un appassionato o vuoi semplicemente saperne di più?
+            Scrivici e ti risponderemo entro 24 ore.
+          </p>
+
+          <!-- Contact form (design only — no backend) -->
+          <form id="contactForm" novalidate aria-label="Modulo di contatto Torrefazione Mori">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Nome e Cognome</label>
+                <input type="text" id="name" name="name"
+                       placeholder="Marco Bianchi"
+                       autocomplete="name"
+                       required
+                       aria-required="true" />
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email"
+                       placeholder="marco@esempio.it"
+                       autocomplete="email"
+                       required
+                       aria-required="true" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Oggetto</label>
+              <input type="text" id="subject" name="subject"
+                     placeholder="Richiesta informazioni sui prodotti" />
+            </div>
+
+            <div class="form-group">
+              <label for="message">Messaggio</label>
+              <textarea id="message" name="message" rows="5"
+                        placeholder="Raccontaci di cosa hai bisogno…"
+                        required
+                        aria-required="true"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-dark form-submit">
+              Invia il Messaggio
+              <span aria-hidden="true">→</span>
+            </button>
+
+          </form>
+
+          <!-- Success message shown after submit -->
+          <div class="form-success" id="formSuccess" role="status" aria-live="polite">
+            <p>Grazie! Ti risponderemo presto ☕</p>
+          </div>
+
+        </div>
+      </div><!-- / #contact -->
+
+    </div>
+  </section><!-- / #about -->
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer role="contentinfo">
+    <div class="container">
+      <div class="footer-inner">
+
+        <!-- Brand column -->
+        <div class="footer-brand">
+          <p class="footer-logo">
+            Torrefazione Mori
+            <small>Artigiani del Caffè dal 1962</small>
+          </p>
+          <p>
+            Torrefazione artigianale di famiglia con sede a Venezia.
+            Selezioniamo, tostiamo e consegniamo caffè di specialità
+            in tutta Italia.
+          </p>
+        </div>
+
+        <!-- Navigation column -->
+        <div class="footer-col">
+          <h5>Navigazione</h5>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#products">Prodotti</a></li>
+            <li><a href="#about">Chi Siamo</a></li>
+            <li><a href="#contact">Contatti</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact column -->
+        <div class="footer-col">
+          <h5>Contatti</h5>
+          <ul>
+            <li><a href="mailto:info@torrefazionemori.it">info@torrefazionemori.it</a></li>
+            <li><a href="tel:+390415551234">+39 041 555 1234</a></li>
+            <li><a href="#">Calle del Caffè 7, Venezia</a></li>
+            <li><a href="#">Lun–Sab 8:00–18:00</a></li>
+          </ul>
+        </div>
+
+      </div><!-- / .footer-inner -->
+
+      <div class="footer-bottom">
+        <p>© 2024 Torrefazione Mori S.r.l. — Tutti i diritti riservati</p>
+        <p>Artigiani del Caffè dal 1962 · Venezia, Italia</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- =============================================
+       JAVASCRIPT
+       - Nav scroll behaviour
+       - Mobile menu toggle
+       - Intersection Observer for scroll animations
+       - Form submit handler
+  ============================================= -->
+  <script>
+    // ─── NAV: add .scrolled class when page is scrolled ──────────────────
+    const nav = document.getElementById('mainNav');
+
+    function updateNav() {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }
+
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav(); // run on load
+
+    // ─── MOBILE MENU TOGGLE ───────────────────────────────────────────────
+    const navToggle = document.getElementById('navToggle');
+    const navMobile = document.getElementById('navMobile');
+
+    function openMenu() {
+      navToggle.classList.add('open');
+      navMobile.classList.add('open');
+      navToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden'; // prevent body scroll
+    }
+
+    function closeMenu() {
+      navToggle.classList.remove('open');
+      navMobile.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    navToggle.addEventListener('click', () => {
+      navMobile.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+    // Close mobile menu on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMenu();
+    });
+
+    // ─── INTERSECTION OBSERVER — scroll-triggered animations ─────────────
+    // Targets: .reveal and .stagger elements
+    const observerOptions = {
+      threshold: 0.12,         // trigger when 12% of element is visible
+      rootMargin: '0px 0px -40px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target); // animate only once
+        }
+      });
+    }, observerOptions);
+
+    // Observe all reveal and stagger elements
+    document.querySelectorAll('.reveal, .stagger').forEach(el => {
+      observer.observe(el);
+    });
+
+    // ─── CONTACT FORM — demo submit handler ──────────────────────────────
+    const form = document.getElementById('contactForm');
+    const formSuccess = document.getElementById('formSuccess');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // prevent actual submission (no backend)
+
+      // Basic validation: check required fields
+      const name    = document.getElementById('name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !message) {
+        // Shake animation on empty required fields
+        [name ? null : 'name', email ? null : 'email', message ? null : 'message']
+          .filter(Boolean)
+          .forEach(id => {
+            const el = document.getElementById(id);
+            el.style.animation = 'none';
+            el.offsetHeight; // reflow
+            el.style.borderBottomColor = '#c0392b';
+            setTimeout(() => { el.style.borderBottomColor = ''; }, 2000);
+          });
+        return;
+      }
+
+      // Hide form, show success message
+      form.style.display = 'none';
+      formSuccess.classList.add('show');
+    });
+
+    // ─── SMOOTH SCROLL POLYFILL (for anchor links in older browsers) ─────
+    // Most modern browsers support CSS scroll-behavior: smooth,
+    // but this JS fallback ensures consistent behaviour.
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        const target = document.querySelector(targetId);
+        if (!target) return;
+
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Update URL hash without jumping
+        history.pushState(null, '', targetId);
+      });
+    });
+  </script>
+
+</body>
+</html>
