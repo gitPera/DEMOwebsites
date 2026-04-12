@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ferramenta Zaggia – Maserà di Padova</title>
+  <meta name="description" content="Ferramenta Zaggia di Cattelan – ferramenta professionale a Maserà di Padova dal 2000. Utensili, vernici, elettrico, idraulica." />
+
+  <!-- ============================================================
+       FONTS
+       Barlow Condensed  → heavy industrial headlines
+       IBM Plex Sans     → technical, precise body text
+  ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+
+    /* ============================================================
+       DESIGN TOKENS
+       Dark steel ground · Safety yellow accent · Rust warmth
+    ============================================================ */
+    :root {
+      --black:    #080808;
+      --steel-dk: #111111;
+      --steel:    #1A1A1A;
+      --steel-md: #242424;
+      --steel-lt: #323232;
+      --wire:     #484848;
+      --smoke:    #888888;
+      --chalk:    #D8D4CE;
+      --white:    #F4F0EA;
+
+      --yellow:   #FFD600;   /* safety / industrial accent */
+      --yellow-dk:#C8A800;
+      --rust:     #C84B1A;
+      --rust-lt:  #E05E28;
+
+      --nav-h:    68px;
+      --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+
+      /* Subtle metal grid bg */
+      --grid-bg:
+        repeating-linear-gradient(
+          0deg,
+          transparent, transparent 39px,
+          rgba(255,255,255,0.022) 39px, rgba(255,255,255,0.022) 40px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent, transparent 39px,
+          rgba(255,255,255,0.022) 39px, rgba(255,255,255,0.022) 40px
+        );
+    }
+
+    /* ============================================================  RESET  */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html  { scroll-behavior: smooth; font-size: 16px; }
+    body  {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--black);
+      color: var(--chalk);
+      overflow-x: hidden;
+      line-height: 1.65;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    a   { color: inherit; text-decoration: none; }
+
+    /* ============================================================  UTILS  */
+    .head {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 0.95;
+    }
+    .stencil {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .yl { color: var(--yellow); }
+
+    /* ============================================================  REVEAL  */
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity .7s var(--ease), transform .7s var(--ease);
+    }
+    .reveal.in { opacity: 1; transform: none; }
+
+    .reveal-l {
+      opacity: 0; transform: translateX(-50px);
+      transition: opacity .7s var(--ease), transform .7s var(--ease);
+    }
+    .reveal-l.in { opacity: 1; transform: none; }
+
+    .reveal-r {
+      opacity: 0; transform: translateX(50px);
+      transition: opacity .7s var(--ease), transform .7s var(--ease);
+    }
+    .reveal-r.in { opacity: 1; transform: none; }
+
+    .d1{transition-delay:.08s} .d2{transition-delay:.16s}
+    .d3{transition-delay:.24s} .d4{transition-delay:.32s}
+    .d5{transition-delay:.40s} .d6{transition-delay:.48s}
+
+    /* ============================================================  CURSOR  */
+    body { cursor: none; }
+    #cur  {
+      position:fixed; width:8px; height:8px;
+      background:var(--yellow); border-radius:50%;
+      pointer-events:none; z-index:9999;
+      transform:translate(-50%,-50%);
+      transition: width .25s var(--ease), height .25s var(--ease), background .25s;
+    }
+    #cur-r {
+      position:fixed; width:32px; height:32px;
+      border:1px solid var(--yellow); border-radius:50%;
+      pointer-events:none; z-index:9998;
+      transform:translate(-50%,-50%);
+      opacity:.45;
+      transition: width .3s var(--ease), height .3s var(--ease), opacity .3s;
+    }
+    @media(pointer:coarse){ body{cursor:auto} #cur,#cur-r{display:none} }
+
+    /* ============================================================  NAV  */
+    .nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      height:var(--nav-h);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 clamp(1.5rem,5vw,3.5rem);
+      border-bottom:1px solid transparent;
+      transition:background .4s, border-color .4s;
+    }
+    .nav.scrolled {
+      background:rgba(8,8,8,.96);
+      backdrop-filter:blur(16px);
+      border-color:var(--steel-lt);
+    }
+
+    /* Logo */
+    .nav__logo { display:flex; align-items:center; gap:.9rem; }
+    .nav__mark {
+      width:32px; height:32px;
+      background:var(--yellow);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .nav__wm { display:flex; flex-direction:column; line-height:1; }
+    .nav__wm-top {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:1.15rem;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--white);
+    }
+    .nav__wm-sub {
+      font-size:.6rem; font-weight:500;
+      letter-spacing:.2em; text-transform:uppercase;
+      color:var(--smoke); margin-top:2px;
+    }
+
+    /* Links */
+    .nav__links {
+      display:flex; align-items:center; gap:2.5rem; list-style:none;
+    }
+    .nav__links a {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.82rem;
+      letter-spacing:.18em; text-transform:uppercase;
+      color:var(--smoke); transition:color .25s;
+    }
+    .nav__links a:hover { color:var(--yellow); }
+    .nav__cta {
+      background:var(--yellow); color:var(--black) !important;
+      padding:.45rem 1.1rem; font-weight:700 !important;
+      transition:background .25s, transform .25s var(--ease) !important;
+    }
+    .nav__cta:hover { background:var(--white)!important; transform:translateY(-1px); }
+
+    /* Burger */
+    .nav__burger {
+      display:none; flex-direction:column; gap:5px;
+      cursor:pointer; background:none; border:none; padding:4px;
+    }
+    .nav__burger span { display:block; width:22px; height:2px; background:var(--white); }
+
+    /* Mobile menu */
+    .nav__mob {
+      display:none; position:fixed; inset:0;
+      background:var(--black); z-index:190;
+      flex-direction:column; align-items:flex-start; justify-content:center;
+      padding:0 clamp(1.5rem,8vw,4rem);
+      list-style:none; border-top:3px solid var(--yellow);
+    }
+    .nav__mob.open { display:flex; }
+    .nav__mob li { border-bottom:1px solid var(--steel-lt); width:100%; }
+    .nav__mob a {
+      display:block;
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:clamp(2.5rem,8vw,4rem);
+      text-transform:uppercase; letter-spacing:-.01em;
+      color:var(--white); padding:.7rem 0;
+      transition:color .25s, padding-left .3s var(--ease);
+    }
+    .nav__mob a:hover { color:var(--yellow); padding-left:1rem; }
+
+    /* ============================================================  HERO  */
+    #home {
+      position:relative;
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      background:var(--black);
+      overflow:hidden;
+    }
+    #home::before {
+      content:''; position:absolute; inset:0;
+      background:var(--grid-bg); pointer-events:none; z-index:0;
+    }
+
+    .hero__text {
+      position:relative; z-index:2;
+      display:flex; flex-direction:column; justify-content:flex-end;
+      padding:clamp(6rem,10vw,9rem) clamp(2rem,6vw,4.5rem) clamp(4rem,8vw,7rem);
+    }
+    .hero__tag {
+      display:flex; align-items:center; gap:.75rem; margin-bottom:2rem;
+    }
+    .hero__tag-bar { width:36px; height:3px; background:var(--yellow); }
+
+    .hero__h1 { font-size:clamp(4.5rem,10vw,9.5rem); color:var(--white); margin-bottom:1.5rem; }
+    .hero__h1 .yl-stroke {
+      display:block;
+      -webkit-text-stroke:2px var(--yellow);
+      color:transparent;
+    }
+
+    .hero__sub {
+      font-size:clamp(.9rem,1.2vw,1.05rem); font-weight:300;
+      color:var(--smoke); max-width:420px; margin-bottom:3rem; line-height:1.7;
+    }
+
+    .btn-row { display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+    .btn {
+      display:inline-flex; align-items:center; gap:.6rem;
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.82rem;
+      letter-spacing:.18em; text-transform:uppercase;
+      padding:.85rem 2rem; border:none; cursor:pointer;
+      transition:transform .3s var(--ease), box-shadow .3s, background .25s;
+    }
+    .btn--y { background:var(--yellow); color:var(--black); }
+    .btn--y:hover { background:var(--white); transform:translateY(-2px); box-shadow:0 10px 28px rgba(255,214,0,.22); }
+    .btn--g { background:transparent; color:var(--chalk); border:1px solid var(--wire); }
+    .btn--g:hover { border-color:var(--yellow); color:var(--yellow); transform:translateY(-2px); }
+
+    /* Right image panel */
+    .hero__img {
+      position:relative; z-index:1;
+      clip-path:polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+    }
+    .hero__img img {
+      width:100%; height:100%; object-fit:cover;
+      filter:brightness(.72) saturate(.6);
+      transition:filter 1.2s;
+    }
+    .hero__img:hover img { filter:brightness(.84) saturate(.85); }
+    .hero__img::after {
+      content:''; position:absolute; top:0; left:0;
+      width:6px; height:100%; background:var(--yellow);
+      clip-path:polygon(0 0,100% 0,40% 100%,0 100%); z-index:3;
+    }
+    .hero__badge {
+      position:absolute; bottom:3rem; right:2.5rem; z-index:4;
+      background:var(--yellow); color:var(--black);
+      padding:1.2rem 1.4rem; text-align:center; width:110px;
+    }
+    .hero__badge-num {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:2.6rem; line-height:1;
+    }
+    .hero__badge-txt {
+      display:block; font-size:.62rem; font-weight:700;
+      letter-spacing:.12em; text-transform:uppercase; margin-top:.2rem;
+    }
+
+    /* Ticker */
+    .ticker-wrap {
+      position:absolute; bottom:0; left:0; right:0; z-index:10;
+      overflow:hidden; background:var(--yellow); height:40px;
+      display:flex; align-items:center;
+    }
+    .ticker {
+      display:flex; white-space:nowrap;
+      animation:ticker 28s linear infinite; gap:0;
+    }
+    .ticker span {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.75rem;
+      letter-spacing:.2em; text-transform:uppercase;
+      color:var(--black); padding:0 2.5rem;
+    }
+    .ticker span::before {
+      content:'◆'; margin-right:2.5rem;
+      font-size:.5rem; vertical-align:middle;
+    }
+    @keyframes ticker {
+      from { transform:translateX(0); }
+      to   { transform:translateX(-50%); }
+    }
+
+    /* ============================================================  STATS  */
+    .stats {
+      background:var(--steel-dk);
+      border-top:1px solid var(--steel-lt);
+      border-bottom:1px solid var(--steel-lt);
+      padding:0 clamp(1.5rem,6vw,4rem);
+    }
+    .stats__inner {
+      max-width:1320px; margin:0 auto;
+      display:grid; grid-template-columns:repeat(4,1fr);
+    }
+    .stat {
+      padding:2.8rem 2rem;
+      border-right:1px solid var(--steel-lt);
+      position:relative;
+    }
+    .stat:last-child { border-right:none; }
+    .stat__num {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:clamp(3rem,5vw,4.5rem);
+      color:var(--yellow); line-height:1; display:block;
+    }
+    .stat__lbl {
+      font-size:.72rem; font-weight:500;
+      letter-spacing:.18em; text-transform:uppercase;
+      color:var(--smoke); margin-top:.5rem; display:block;
+    }
+    .stat::before {
+      content:''; position:absolute; top:0; left:0;
+      width:3px; height:40%; background:var(--yellow);
+      opacity:0; transition:opacity .3s, height .4s var(--ease);
+    }
+    .stat:hover::before { opacity:1; height:100%; }
+
+    /* ============================================================  SECTION WRAPPER  */
+    .section {
+      padding:clamp(5rem,9vw,8rem) clamp(1.5rem,6vw,4rem);
+      max-width:1320px; margin:0 auto;
+    }
+
+    /* Section heading with yellow bar */
+    .sh {
+      display:flex; align-items:flex-start; gap:2rem;
+      margin-bottom:clamp(3rem,6vw,5rem);
+    }
+    .sh__bar { width:4px; background:var(--yellow); flex-shrink:0; align-self:stretch; min-height:60px; }
+    .sh__content { flex:1; }
+    .sh__eye { display:flex; align-items:center; gap:.8rem; margin-bottom:.8rem; }
+    .sh__num { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:.75rem; color:var(--yellow); letter-spacing:.12em; }
+    .sh__title { font-size:clamp(2.4rem,5vw,4.5rem); color:var(--white); }
+    .sh__body  { font-size:.95rem; font-weight:300; color:var(--smoke); max-width:500px; margin-top:.8rem; }
+
+    /* ============================================================  PRODUCTS  */
+    #prodotti { background:var(--steel-dk); }
+
+    .products-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:2px;
+    }
+    .product-card:first-child { grid-column:span 2; }
+
+    .product-card {
+      position:relative; overflow:hidden;
+      aspect-ratio:4/3; background:var(--steel); cursor:pointer;
+    }
+    .product-card:first-child { aspect-ratio:16/7; }
+    .product-card img {
+      width:100%; height:100%; object-fit:cover;
+      filter:brightness(.6) saturate(.55);
+      transition:transform .7s var(--ease), filter .5s;
+    }
+    .product-card:hover img { transform:scale(1.06); filter:brightness(.45) saturate(.3); }
+
+    .pc__body {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; justify-content:flex-end;
+      padding:clamp(1.2rem,3vw,2rem);
+      background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.2) 50%,transparent 100%);
+    }
+    .pc__cat {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.62rem;
+      letter-spacing:.25em; text-transform:uppercase;
+      color:var(--yellow); margin-bottom:.3rem;
+    }
+    .pc__name {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:clamp(1.3rem,3vw,2rem);
+      text-transform:uppercase; letter-spacing:.02em;
+      color:var(--white); line-height:1;
+    }
+    .pc__desc {
+      font-size:.8rem; font-weight:300; color:var(--chalk);
+      opacity:0; max-height:0; overflow:hidden; margin-top:0;
+      transition:opacity .4s, max-height .5s var(--ease), margin-top .3s;
+    }
+    .product-card:hover .pc__desc { opacity:1; max-height:80px; margin-top:.6rem; }
+    .product-card::after {
+      content:''; position:absolute; bottom:0; left:0;
+      width:0; height:3px; background:var(--yellow);
+      transition:width .4s var(--ease);
+    }
+    .product-card:hover::after { width:100%; }
+
+    /* ============================================================  ABOUT  */
+    #chi-siamo { background:var(--black); }
+
+    .about__layout {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:clamp(3rem,7vw,8rem); align-items:start;
+      margin-bottom:clamp(4rem,8vw,8rem);
+    }
+    .about__story p {
+      font-size:.95rem; font-weight:300; color:var(--smoke);
+      margin-bottom:1.2rem; line-height:1.8;
+    }
+    .about__q {
+      margin:2.5rem 0; padding:2rem;
+      border-left:4px solid var(--yellow);
+      background:var(--steel-dk);
+    }
+    .about__q blockquote {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:clamp(1.3rem,2.5vw,1.8rem);
+      text-transform:uppercase; color:var(--white);
+      line-height:1.25; letter-spacing:.01em;
+    }
+    .about__q cite {
+      display:block; font-family:'IBM Plex Sans',sans-serif;
+      font-style:italic; font-size:.78rem;
+      color:var(--yellow); margin-top:.8rem; font-weight:300; letter-spacing:.08em;
+    }
+
+    .about__vis {
+      position:sticky; top:calc(var(--nav-h) + 2rem);
+      display:grid; grid-template-rows:auto auto; gap:3px;
+    }
+    .about__vis-lbl {
+      background:var(--yellow); color:var(--black);
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:.7rem;
+      letter-spacing:.2em; text-transform:uppercase;
+      padding:.5rem 1rem;
+    }
+    .about__vis img {
+      width:100%; object-fit:cover;
+      filter:saturate(.55) brightness(.8);
+      transition:filter .5s;
+    }
+    .about__vis img:hover { filter:saturate(.8) brightness(.9); }
+    .av-tall { aspect-ratio:4/3; }
+    .av-wide { aspect-ratio:16/7; }
+
+    /* ============================================================  TEAM  */
+    .team-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:2px; margin-bottom:clamp(4rem,8vw,8rem);
+    }
+    .team-card {
+      background:var(--steel-dk);
+      border:1px solid var(--steel-lt);
+      overflow:hidden; position:relative;
+      transition:border-color .3s;
+    }
+    .team-card:hover { border-color:var(--yellow); }
+    .tc__img {
+      overflow:hidden; aspect-ratio:3/3.5; position:relative;
+    }
+    .tc__img img {
+      width:100%; height:100%; object-fit:cover;
+      filter:grayscale(90%) brightness(.75);
+      transition:filter .5s, transform .6s var(--ease);
+    }
+    .team-card:hover .tc__img img { filter:grayscale(30%) brightness(.85); transform:scale(1.04); }
+    .tc__tag {
+      position:absolute; top:0; left:0;
+      background:var(--yellow); color:var(--black);
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.6rem;
+      letter-spacing:.2em; text-transform:uppercase;
+      padding:.3rem .7rem;
+    }
+    .tc__body { padding:1.4rem 1.5rem 1.6rem; }
+    .tc__name {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:1.5rem;
+      text-transform:uppercase; letter-spacing:.04em;
+      color:var(--white); line-height:1;
+    }
+    .tc__bio {
+      font-size:.82rem; font-weight:300; color:var(--smoke);
+      margin-top:.7rem; line-height:1.6;
+    }
+
+    /* ============================================================  CONTACT  */
+    #contatti {
+      background:var(--steel-dk);
+      border-top:1px solid var(--steel-lt);
+      padding:clamp(4rem,8vw,8rem) clamp(1.5rem,6vw,4rem);
+    }
+    .contact__inner {
+      max-width:1320px; margin:0 auto;
+      display:grid; grid-template-columns:.9fr 1.1fr;
+      gap:clamp(3rem,8vw,8rem); align-items:start;
+    }
+
+    .cinfo {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:1.5rem 2rem; margin-bottom:3rem;
+    }
+    .ci__lbl {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.62rem;
+      letter-spacing:.22em; text-transform:uppercase;
+      color:var(--yellow); margin-bottom:.3rem;
+    }
+    .ci__val { font-size:.9rem; font-weight:400; color:var(--chalk); line-height:1.5; }
+    .ci__val a { color:inherit; transition:color .2s; }
+    .ci__val a:hover { color:var(--yellow); }
+
+    .map-ph {
+      width:100%; aspect-ratio:16/7;
+      background:var(--steel); border:1px solid var(--steel-lt);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--wire);
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase;
+      position:relative; overflow:hidden;
+    }
+    .map-ph::before,.map-ph::after { content:''; position:absolute; background:var(--steel-lt); }
+    .map-ph::before { width:1px; height:100%; left:50%; }
+    .map-ph::after  { width:100%; height:1px; top:50%; }
+
+    /* Form */
+    .cform { display:flex; flex-direction:column; gap:1rem; }
+    .fg { display:flex; flex-direction:column; gap:.45rem; }
+    .fg label {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.62rem;
+      letter-spacing:.22em; text-transform:uppercase; color:var(--smoke);
+    }
+    .fg input,
+    .fg textarea {
+      background:var(--steel);
+      border:1px solid var(--steel-lt);
+      border-bottom:2px solid var(--wire);
+      padding:.85rem 1rem;
+      font-family:'IBM Plex Sans',sans-serif;
+      font-size:.9rem; color:var(--white);
+      transition:border-color .3s, background .3s;
+      outline:none; resize:vertical; border-radius:0;
+    }
+    .fg input::placeholder, .fg textarea::placeholder { color:var(--wire); }
+    .fg input:focus, .fg textarea:focus {
+      border-bottom-color:var(--yellow);
+      background:var(--steel-md);
+    }
+    .fg textarea { min-height:130px; }
+    .fr2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+    .btn-sub {
+      background:var(--yellow); color:var(--black);
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:.82rem;
+      letter-spacing:.2em; text-transform:uppercase;
+      padding:1rem 2.5rem; border:none; cursor:pointer;
+      align-self:flex-start;
+      display:flex; align-items:center; gap:.6rem;
+      transition:background .25s, transform .3s var(--ease), box-shadow .3s;
+    }
+    .btn-sub:hover { background:var(--white); transform:translateY(-2px); box-shadow:0 8px 28px rgba(255,214,0,.2); }
+
+    #form-ok {
+      display:none;
+      background:rgba(255,214,0,.08);
+      border:1px solid var(--yellow);
+      padding:.9rem 1.2rem; font-size:.82rem; color:var(--yellow);
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; letter-spacing:.1em;
+    }
+
+    /* ============================================================  FOOTER  */
+    footer {
+      background:var(--black);
+      border-top:3px solid var(--yellow);
+      padding:2rem clamp(1.5rem,6vw,4rem);
+    }
+    .footer__inner {
+      max-width:1320px; margin:0 auto;
+      display:flex; justify-content:space-between;
+      align-items:center; flex-wrap:wrap; gap:1rem;
+    }
+    .footer__logo {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900; font-size:1.2rem;
+      text-transform:uppercase; letter-spacing:.1em; color:var(--yellow);
+    }
+    .footer__copy { font-size:.72rem; color:var(--wire); letter-spacing:.06em; }
+
+    /* ============================================================  RESPONSIVE  */
+    @media(max-width:1024px){
+      .products-grid{ grid-template-columns:1fr 1fr; }
+      .product-card:first-child{ grid-column:span 2; }
+      .stats__inner{ grid-template-columns:repeat(2,1fr); }
+      .stat{ border-bottom:1px solid var(--steel-lt); }
+    }
+    @media(max-width:860px){
+      #home{ grid-template-columns:1fr; min-height:auto; }
+      .hero__img{ clip-path:none; height:55vw; min-height:280px; }
+      .hero__img::after{ display:none; }
+      .about__layout{ grid-template-columns:1fr; }
+      .about__vis{ position:static; }
+      .team-grid{ grid-template-columns:1fr 1fr; }
+      .contact__inner{ grid-template-columns:1fr; }
+      .cinfo{ grid-template-columns:1fr; }
+    }
+    @media(max-width:600px){
+      .nav__links{ display:none; }
+      .nav__burger{ display:flex; }
+      .products-grid{ grid-template-columns:1fr; }
+      .product-card:first-child{ grid-column:span 1; aspect-ratio:4/3; }
+      .team-grid{ grid-template-columns:1fr; }
+      .stats__inner{ grid-template-columns:1fr 1fr; }
+      .fr2{ grid-template-columns:1fr; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cur"  aria-hidden="true"></div>
+  <div id="cur-r" aria-hidden="true"></div>
+
+  <!-- ======== NAV ======== -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Navigazione principale">
+    <a href="#home" class="nav__logo" aria-label="Ferramenta Zaggia – torna all'inizio">
+      <div class="nav__mark" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M3 4h12L3 14h12" stroke="#000" stroke-width="2.2" stroke-linecap="square"/>
+        </svg>
+      </div>
+      <div class="nav__wm">
+        <span class="nav__wm-top">Zaggia</span>
+        <span class="nav__wm-sub">Ferramenta · Est. 2000</span>
+      </div>
+    </a>
+
+    <ul class="nav__links" role="list">
+      <li><a href="#prodotti">Prodotti</a></li>
+      <li><a href="#chi-siamo">Chi Siamo</a></li>
+      <li><a href="#contatti" class="nav__cta">Contattaci</a></li>
+    </ul>
+
+    <button class="nav__burger" id="burger" aria-label="Apri menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <ul class="nav__mob" id="mobileMenu" role="list" aria-label="Menu mobile">
+    <li><a href="#home"      class="ml">Home</a></li>
+    <li><a href="#prodotti"  class="ml">Prodotti</a></li>
+    <li><a href="#chi-siamo" class="ml">Chi Siamo</a></li>
+    <li><a href="#contatti"  class="ml">Contatti</a></li>
+  </ul>
+
+
+  <!-- ======== HERO ======== -->
+  <section id="home" aria-label="Benvenuti in Ferramenta Zaggia">
+
+    <div class="hero__text">
+      <div class="hero__tag reveal">
+        <div class="hero__tag-bar"></div>
+        <span class="stencil">Maserà di Padova · Veneto</span>
+      </div>
+      <h1 class="head hero__h1 reveal d1">
+        Ferra<span class="yl-stroke">menta</span>
+        Zaggia
+      </h1>
+      <p class="hero__sub reveal d2">
+        Utensili, vernici, materiale elettrico e termoidraulico.
+        La ferramenta di fiducia della famiglia Cattelan,
+        in piazza Bertipaglia dal 2000.
+      </p>
+      <div class="btn-row reveal d3">
+        <a href="#prodotti" class="btn btn--y">
+          I nostri prodotti
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
+          </svg>
+        </a>
+        <a href="#contatti" class="btn btn--g">Richiedi info</a>
+      </div>
+    </div>
+
+    <div class="hero__img" aria-hidden="true">
+      <img
+        src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=85&fit=crop"
+        alt="Utensili da lavoro su pannello pegboard"
+        loading="eager"
+      />
+      <div class="hero__badge" aria-label="Fondati nel 2000">
+        <div class="hero__badge-num">00</div>
+        <span class="hero__badge-txt">Dal 20</span>
+      </div>
+    </div>
+
+    <div class="ticker-wrap" aria-hidden="true">
+      <div class="ticker">
+        <span>Utensili professionali</span><span>Vernici &amp; Finiture</span>
+        <span>Materiale elettrico</span><span>Termoidraulica</span>
+        <span>Viteria &amp; Bulloneria</span><span>Vetro piano</span>
+        <span>Giardinaggio</span><span>Ferramenta Zaggia</span>
+        <span>Utensili professionali</span><span>Vernici &amp; Finiture</span>
+        <span>Materiale elettrico</span><span>Termoidraulica</span>
+        <span>Viteria &amp; Bulloneria</span><span>Vetro piano</span>
+        <span>Giardinaggio</span><span>Ferramenta Zaggia</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ======== STATS ======== -->
+  <div class="stats" role="region" aria-label="Numeri chiave">
+    <div class="stats__inner">
+      <div class="stat reveal">
+        <span class="stat__num">25+</span>
+        <span class="stat__lbl">Anni in attività</span>
+      </div>
+      <div class="stat reveal d1">
+        <span class="stat__num">3</span>
+        <span class="stat__lbl">Generazioni Cattelan</span>
+      </div>
+      <div class="stat reveal d2">
+        <span class="stat__num">5K+</span>
+        <span class="stat__lbl">Referenze in stock</span>
+      </div>
+      <div class="stat reveal d3">
+        <span class="stat__num">1</span>
+        <span class="stat__lbl">Punto di fiducia in zona</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======== PRODUCTS ======== -->
+  <section id="prodotti" aria-label="I nostri prodotti">
+    <div class="section">
+
+      <div class="sh reveal">
+        <div class="sh__bar"></div>
+        <div class="sh__content">
+          <div class="sh__eye">
+            <span class="sh__num">01 —</span>
+            <span class="stencil">Categorie prodotto</span>
+          </div>
+          <h2 class="head sh__title">
+            Tutto per<br /><span class="yl">costruire.</span>
+          </h2>
+          <p class="sh__body">Dal bullone all'impianto completo: la nostra selezione copre ogni esigenza di professionisti e privati.</p>
+        </div>
+      </div>
+
+      <div class="products-grid">
+
+        <article class="product-card reveal">
+          <img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=900&q=80&fit=crop" alt="Set di utensili manuali professionali" loading="lazy" />
+          <div class="pc__body">
+            <div class="pc__cat">01 · Manuali</div>
+            <h3 class="pc__name">Utensili &amp; Attrezzi</h3>
+            <p class="pc__desc">Martelli, chiavi, cacciaviti, seghetti, morse e set professionali per cantiere e laboratorio.</p>
+          </div>
+        </article>
+
+        <article class="product-card reveal d1">
+          <img src="https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600&q=80&fit=crop" alt="Campioni colore vernici e smalti" loading="lazy" />
+          <div class="pc__body">
+            <div class="pc__cat">02 · Finiture</div>
+            <h3 class="pc__name">Vernici &amp; Smalti</h3>
+            <p class="pc__desc">Colori all'acqua, solventi, primer, stucchi e sistemi per ogni supporto interno ed esterno.</p>
+          </div>
+        </article>
+
+        <article class="product-card reveal d2">
+          <img src="https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=600&q=80&fit=crop" alt="Cavi e componenti elettrici" loading="lazy" />
+          <div class="pc__body">
+            <div class="pc__cat">03 · Impiantistica</div>
+            <h3 class="pc__name">Materiale Elettrico</h3>
+            <p class="pc__desc">Cavi, prese, interruttori, quadri, protezioni e accessori per impianti civili e industriali.</p>
+          </div>
+        </article>
+
+        <article class="product-card reveal d3">
+          <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80&fit=crop" alt="Raccordi e tubi idraulici in acciaio" loading="lazy" />
+          <div class="pc__body">
+            <div class="pc__cat">04 · Idraulica</div>
+            <h3 class="pc__name">Termoidraulica</h3>
+            <p class="pc__desc">Tubi, raccordi, rubinetteria, sistemi di riscaldamento e accessori per ogni tipo di impianto.</p>
+          </div>
+        </article>
+
+        <article class="product-card reveal d4">
+          <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80&fit=crop" alt="Assortimento viti bulloni e minuteria" loading="lazy" />
+          <div class="pc__body">
+            <div class="pc__cat">05 · Minuteria</div>
+            <h3 class="pc__name">Viteria &amp; Bulloneria</h3>
+            <p class="pc__desc">Migliaia di referenze in acciaio inox, zincato e ottone: viti, bulloni, dadi, tasselli, ancoraggi.</p>
+          </div>
+        </article>
+
+        <article class="product-card reveal d5">
+          <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80&fit=crop" alt="Attrezzi e strumenti da giardinaggio" loading="lazy" />
+          <div class="pc__body">
+            <div class="pc__cat">06 · Outdoor</div>
+            <h3 class="pc__name">Giardinaggio</h3>
+            <p class="pc__desc">Pale, rastrelli, irrigazione, teli, concimi e tutto per la cura di giardini e spazi esterni.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ======== ABOUT ======== -->
+  <section id="chi-siamo" aria-label="Chi siamo">
+    <div class="section">
+
+      <div class="sh reveal">
+        <div class="sh__bar"></div>
+        <div class="sh__content">
+          <div class="sh__eye">
+            <span class="sh__num">02 —</span>
+            <span class="stencil">La nostra storia</span>
+          </div>
+          <h2 class="head sh__title">
+            Una famiglia.<br /><span class="yl">Un mestiere.</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="about__layout">
+
+        <div class="about__story reveal-l">
+          <p>Era il <strong style="color:var(--white)">12 dicembre 2000</strong> quando Daniele e Mariarosa Cattelan aprirono i battenti di Ferramenta Zaggia in Piazza Bertipaglia, 28. Una scommessa sul territorio, su Maserà di Padova, sulla gente che ci lavora e ci abita.</p>
+          <div class="about__q">
+            <blockquote>"Siamo qui da 25 anni perché la gente si fida di noi.<br/>E noi ci guadagniamo quella fiducia ogni giorno."</blockquote>
+            <cite>— Daniele Cattelan, co-fondatore</cite>
+          </div>
+          <p>Il negozio è cresciuto anno dopo anno, arricchendo l'assortimento e affinando la competenza tecnica. Ogni cliente — dall'artigiano esperto al privato alle prime armi con il trapano — trova risposta alle sue domande con la stessa attenzione.</p>
+          <p>Oggi <strong style="color:var(--white)">Luca</strong> affianca i genitori portando energia nuova senza snaturare i valori fondanti: qualità dei prodotti, onestà nel consiglio, rapidità nel servizio.</p>
+        </div>
+
+        <div class="about__vis reveal-r">
+          <div class="about__vis-lbl">Ferramenta · Maserà di Padova</div>
+          <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80&fit=crop" alt="Officina artigianale con utensili professionali" class="av-tall" loading="lazy" />
+          <img src="https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&q=80&fit=crop" alt="Attrezzi manuali in officina" class="av-wide" loading="lazy" />
+        </div>
+
+      </div>
+
+      <!-- Team -->
+      <div class="sh reveal" style="margin-bottom:clamp(2rem,4vw,3rem)">
+        <div class="sh__bar"></div>
+        <div class="sh__content">
+          <div class="sh__eye">
+            <span class="sh__num">03 —</span>
+            <span class="stencil">Il team</span>
+          </div>
+          <h2 class="head sh__title" style="font-size:clamp(2rem,4vw,3rem)">
+            Le persone<br /><span class="yl">dietro al bancone.</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="team-grid">
+
+        <div class="team-card reveal">
+          <div class="tc__img">
+            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&q=80&fit=crop&crop=faces" alt="Ritratto di Daniele Cattelan" loading="lazy" />
+            <span class="tc__tag">Co-fondatore</span>
+          </div>
+          <div class="tc__body">
+            <div class="tc__name">Daniele Cattelan</div>
+            <p class="tc__bio">25 anni di esperienza nel settore. Punto di riferimento tecnico per professionisti dell'edilizia e dell'impiantistica di tutta la zona.</p>
+          </div>
+        </div>
+
+        <div class="team-card reveal d2">
+          <div class="tc__img">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80&fit=crop&crop=faces" alt="Ritratto di Mariarosa Cattelan" loading="lazy" />
+            <span class="tc__tag">Co-fondatrice</span>
+          </div>
+          <div class="tc__body">
+            <div class="tc__name">Mariarosa Cattelan</div>
+            <p class="tc__bio">L'anima organizzativa del negozio. Con cura e precisione gestisce assortimento, logistica e la relazione quotidiana con i clienti.</p>
+          </div>
+        </div>
+
+        <div class="team-card reveal d4">
+          <div class="tc__img">
+            <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=600&q=80&fit=crop&crop=faces" alt="Ritratto di Luca Cattelan" loading="lazy" />
+            <span class="tc__tag">Resp. Commerciale</span>
+          </div>
+          <div class="tc__body">
+            <div class="tc__name">Luca Cattelan</div>
+            <p class="tc__bio">La nuova generazione. Porta innovazione nell'assortimento e un approccio digitale, rispettando i valori della tradizione di famiglia.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ======== CONTACT ======== -->
+  <section id="contatti" aria-label="Contatti e modulo di contatto">
+    <div class="contact__inner">
+
+      <div>
+        <div class="sh reveal">
+          <div class="sh__bar"></div>
+          <div class="sh__content">
+            <div class="sh__eye">
+              <span class="sh__num">04 —</span>
+              <span class="stencil">Dove siamo</span>
+            </div>
+            <h2 class="head sh__title" style="font-size:clamp(2rem,4vw,3rem)">
+              Vieni a<br /><span class="yl">trovarci.</span>
+            </h2>
+          </div>
+        </div>
+
+        <div class="cinfo reveal d1">
+          <div>
+            <div class="ci__lbl">Indirizzo</div>
+            <div class="ci__val">Piazza Bertipaglia, 28<br/>35020 Maserà di Padova (PD)</div>
+          </div>
+          <div>
+            <div class="ci__lbl">Telefono</div>
+            <div class="ci__val"><a href="tel:+390498860143">049 886 0143</a></div>
+          </div>
+          <div>
+            <div class="ci__lbl">Orari</div>
+            <div class="ci__val">Lun–Ven: 8:00–12:30 · 15:30–19:00<br/>Sab: 8:00–12:30 · Dom: chiuso</div>
+          </div>
+          <div>
+            <div class="ci__lbl">Sito web</div>
+            <div class="ci__val"><a href="https://www.ferramentazaggia.it" target="_blank" rel="noopener">ferramentazaggia.it</a></div>
+          </div>
+        </div>
+
+        <div class="map-ph reveal d2" aria-label="Posizione indicativa su mappa">
+          <span>Piazza Bertipaglia, 28 · Maserà di Padova</span>
+        </div>
+      </div>
+
+      <form class="cform reveal-r" aria-label="Modulo di contatto" novalidate onsubmit="submitForm(event)">
+
+        <div class="fr2">
+          <div class="fg">
+            <label for="fn">Nome e cognome</label>
+            <input type="text"  id="fn" name="name"  placeholder="Mario Rossi"      autocomplete="name"  required />
+          </div>
+          <div class="fg">
+            <label for="fe">Email</label>
+            <input type="email" id="fe" name="email" placeholder="mario@esempio.it" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="fg">
+          <label for="ft">Telefono <span style="color:var(--wire);font-weight:300">(opzionale)</span></label>
+          <input type="tel" id="ft" name="phone" placeholder="+39 049 000 0000" autocomplete="tel" />
+        </div>
+
+        <div class="fg">
+          <label for="fo">Oggetto</label>
+          <input type="text" id="fo" name="subject" placeholder="Richiesta preventivo / Informazioni prodotto" />
+        </div>
+
+        <div class="fg">
+          <label for="fm">Messaggio</label>
+          <textarea id="fm" name="message" placeholder="Descrivi la tua richiesta..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-sub">
+          Invia richiesta
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
+          </svg>
+        </button>
+
+        <div id="form-ok" role="status" aria-live="polite">
+          ✓ MESSAGGIO INVIATO — Vi risponderemo al più presto.
+        </div>
+
+      </form>
+    </div>
+  </section>
+
+
+  <!-- ======== FOOTER ======== -->
+  <footer role="contentinfo">
+    <div class="footer__inner">
+      <span class="footer__logo">Ferramenta Zaggia</span>
+      <span class="footer__copy">
+        © 2025 Cattelan Daniele e Mariarosa S.n.c. · P.IVA 03583280288 · Piazza Bertipaglia 28, Maserà di Padova
+      </span>
+    </div>
+  </footer>
+
+
+  <script>
+    /* ---- Custom cursor ---- */
+    const dot  = document.getElementById('cur');
+    const ring = document.getElementById('cur-r');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e=>{
+      mx=e.clientX; my=e.clientY;
+      dot.style.left=mx+'px'; dot.style.top=my+'px';
+    });
+    (function loop(){
+      rx+=(mx-rx)*.14; ry+=(my-ry)*.14;
+      ring.style.left=rx+'px'; ring.style.top=ry+'px';
+      requestAnimationFrame(loop);
+    })();
+
+    /* ---- Nav scroll ---- */
+    const nav=document.getElementById('nav');
+    window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
+
+    /* ---- Hamburger ---- */
+    const burger=document.getElementById('burger');
+    const mob=document.getElementById('mobileMenu');
+    const openM =()=>{ mob.classList.add('open'); burger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; };
+    const closeM=()=>{ mob.classList.remove('open'); burger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; };
+    burger.addEventListener('click',()=>mob.classList.contains('open')?closeM():openM());
+    document.querySelectorAll('.ml').forEach(l=>l.addEventListener('click',closeM));
+
+    /* ---- Scroll reveal ---- */
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{threshold:.1,rootMargin:'0px 0px -50px 0px'});
+    document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(el=>io.observe(el));
+
+    /* ---- Active nav link ---- */
+    const sio=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          const id=e.target.id;
+          document.querySelectorAll('.nav__links a').forEach(l=>{
+            l.style.color=l.getAttribute('href')===`#${id}`?'var(--yellow)':'';
+          });
+        }
+      });
+    },{threshold:.4});
+    document.querySelectorAll('section[id]').forEach(s=>sio.observe(s));
+
+    /* ---- Form submit ---- */
+    function submitForm(e){
+      e.preventDefault();
+      const f=e.target,ok=document.getElementById('form-ok');
+      if(!f.querySelector('#fn').value.trim()){f.querySelector('#fn').focus();return;}
+      if(!f.querySelector('#fe').value.trim()){f.querySelector('#fe').focus();return;}
+      if(!f.querySelector('#fm').value.trim()){f.querySelector('#fm').focus();return;}
+      ok.style.display='block'; f.reset();
+      setTimeout(()=>ok.style.display='none',5000);
+    }
+
+    /* ---- Counter animation ---- */
+    document.querySelectorAll('.stat__num').forEach(el=>{
+      const raw=el.textContent.replace(/[^0-9]/g,'');
+      if(!raw)return;
+      const target=parseInt(raw,10);
+      const suffix=el.textContent.replace(/[0-9]/g,'');
+      let started=false;
+      const obs=new IntersectionObserver(entries=>{
+        if(entries[0].isIntersecting&&!started){
+          started=true; let t0=null; const dur=1400;
+          requestAnimationFrame(function step(ts){
+            if(!t0)t0=ts;
+            const p=Math.min((ts-t0)/dur,1);
+            const ease=1-Math.pow(1-p,3);
+            el.textContent=Math.round(ease*target)+suffix;
+            if(p<1)requestAnimationFrame(step);
+          });
+          obs.disconnect();
+        }
+      },{threshold:.5});
+      obs.observe(el.closest('.stat'));
+    });
+  </script>
+
+</body>
+</html>
