@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="GreenCraft — Professional gardening and property maintenance. Lawn care, landscaping, pruning, and seasonal clean-ups delivered with passion and precision." />
+  <title>GreenCraft — Garden & Property Maintenance</title>
+
+  <!-- Google Fonts: Cormorant Garamond (display) + Jost (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       DESIGN TOKENS & CSS VARIABLES
+    ========================================================= */
+    :root {
+      /* Color Palette — earthy, botanical */
+      --clr-forest:    #2A4035;   /* deep forest green — primary */
+      --clr-moss:      #4A6741;   /* mid-tone moss green */
+      --clr-sage:      #8BAF7C;   /* light sage accent */
+      --clr-cream:     #F5EFE4;   /* warm cream — main bg */
+      --clr-sand:      #E2C99A;   /* sandy tone */
+      --clr-clay:      #B96B3F;   /* terracotta accent */
+      --clr-soil:      #3A2A1A;   /* dark soil — text */
+      --clr-parchment: #FAF6EE;   /* off-white sections */
+      --clr-white:     #FFFFFF;
+
+      /* Typography Scale */
+      --ff-display: 'Cormorant Garamond', Georgia, serif;
+      --ff-body:    'Jost', sans-serif;
+
+      --fs-xs:   0.75rem;   /* 12px */
+      --fs-sm:   0.875rem;  /* 14px */
+      --fs-base: 1rem;      /* 16px */
+      --fs-md:   1.125rem;  /* 18px */
+      --fs-lg:   1.375rem;  /* 22px */
+      --fs-xl:   1.75rem;   /* 28px */
+      --fs-2xl:  2.25rem;   /* 36px */
+      --fs-3xl:  3rem;      /* 48px */
+      --fs-4xl:  4rem;      /* 64px */
+      --fs-5xl:  5.5rem;    /* 88px */
+
+      /* Spacing Scale (8px base) */
+      --sp-1:  0.5rem;   /*  8px */
+      --sp-2:  1rem;     /* 16px */
+      --sp-3:  1.5rem;   /* 24px */
+      --sp-4:  2rem;     /* 32px */
+      --sp-5:  2.5rem;   /* 40px */
+      --sp-6:  3rem;     /* 48px */
+      --sp-8:  4rem;     /* 64px */
+      --sp-10: 5rem;     /* 80px */
+      --sp-12: 6rem;     /* 96px */
+      --sp-16: 8rem;     /* 128px */
+
+      /* Misc */
+      --radius-sm: 4px;
+      --radius-md: 12px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 2px 8px rgba(42,64,53,0.08);
+      --shadow-md: 0 8px 28px rgba(42,64,53,0.14);
+      --shadow-lg: 0 20px 60px rgba(42,64,53,0.18);
+      --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* =========================================================
+       RESET & BASE
+    ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--ff-body);
+      font-weight: 400;
+      color: var(--clr-soil);
+      background-color: var(--clr-cream);
+      overflow-x: hidden;
+      line-height: 1.65;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    ul { list-style: none; }
+
+    /* Grain overlay — subtle texture on the entire page */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 180px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+
+    /* =========================================================
+       TYPOGRAPHY HELPERS
+    ========================================================= */
+    .section-tag {
+      font-family: var(--ff-body);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clr-clay);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-1);
+      margin-bottom: var(--sp-2);
+    }
+    .section-tag::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1.5px;
+      background: var(--clr-clay);
+      flex-shrink: 0;
+    }
+
+    .section-headline {
+      font-family: var(--ff-display);
+      font-size: clamp(var(--fs-2xl), 4vw, var(--fs-4xl));
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--clr-forest);
+    }
+
+    .section-headline em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--clr-moss);
+    }
+
+    .section-subtext {
+      font-size: var(--fs-md);
+      color: #6A5C4A;
+      max-width: 52ch;
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* =========================================================
+       LAYOUT UTILITIES
+    ========================================================= */
+    .container {
+      width: min(90%, 1160px);
+      margin-inline: auto;
+    }
+
+    .section-padding {
+      padding-block: var(--sp-16);
+    }
+
+    /* =========================================================
+       SCROLL ANIMATION — utility classes
+    ========================================================= */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    /* Stagger delays */
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+    .delay-4 { transition-delay: 0.4s; }
+
+    /* =========================================================
+       NAVIGATION
+    ========================================================= */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: var(--sp-3) 0;
+      transition: background var(--transition), box-shadow var(--transition), padding var(--transition);
+    }
+
+    /* Scrolled state — added via JS */
+    .navbar.scrolled {
+      background: rgba(245, 239, 228, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(42,64,53,0.08), var(--shadow-sm);
+      padding: var(--sp-2) 0;
+    }
+
+    .navbar__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Logo */
+    .navbar__logo {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+      font-family: var(--ff-display);
+      font-size: var(--fs-lg);
+      font-weight: 700;
+      color: var(--clr-forest);
+      letter-spacing: -0.01em;
+    }
+    .navbar__logo svg {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    /* Nav links */
+    .navbar__links {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-5);
+    }
+    .navbar__links a {
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--clr-soil);
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .navbar__links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: var(--clr-clay);
+      transition: width var(--transition);
+    }
+    .navbar__links a:hover::after { width: 100%; }
+
+    /* CTA button in nav */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.65em 1.6em;
+      border-radius: var(--radius-full);
+      font-family: var(--ff-body);
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), transform var(--transition), box-shadow var(--transition);
+      border: none;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--clr-forest);
+      color: var(--clr-cream);
+    }
+    .btn-primary:hover {
+      background: var(--clr-moss);
+      box-shadow: 0 6px 24px rgba(42,64,53,0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--clr-forest);
+      color: var(--clr-forest);
+    }
+    .btn-outline:hover {
+      background: var(--clr-forest);
+      color: var(--clr-cream);
+    }
+
+    .btn-clay {
+      background: var(--clr-clay);
+      color: var(--clr-white);
+    }
+    .btn-clay:hover {
+      background: #9E5732;
+      box-shadow: 0 8px 28px rgba(185,107,63,0.35);
+      transform: translateY(-2px);
+    }
+
+    .btn-lg {
+      font-size: var(--fs-base);
+      padding: 0.85em 2.2em;
+    }
+
+    /* Hamburger — mobile */
+    .navbar__hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .navbar__hamburger span {
+      display: block;
+      width: 26px;
+      height: 2px;
+      background: var(--clr-forest);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    /* Animated hamburger open state */
+    .navbar__hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .navbar__hamburger.open span:nth-child(2) { opacity: 0; }
+    .navbar__hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile drawer */
+    .navbar__mobile {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--clr-parchment);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .navbar__mobile.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .navbar__mobile a {
+      font-family: var(--ff-display);
+      font-size: var(--fs-2xl);
+      font-weight: 600;
+      color: var(--clr-forest);
+      transition: color var(--transition);
+    }
+    .navbar__mobile a:hover { color: var(--clr-clay); }
+
+    /* =========================================================
+       HERO SECTION
+    ========================================================= */
+    #home {
+      min-height: 100svh;
+      background-color: var(--clr-forest);
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+
+    /* Left column — text */
+    .hero__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: calc(80px + var(--sp-16)) var(--sp-12) var(--sp-16) max(var(--sp-12), calc((100vw - 1160px) / 2 + var(--sp-5)));
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero__eyebrow {
+      font-family: var(--ff-body);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--clr-sand);
+      margin-bottom: var(--sp-3);
+      opacity: 0;
+      animation: fadeSlideUp 0.7s ease 0.3s forwards;
+    }
+
+    .hero__headline {
+      font-family: var(--ff-display);
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--clr-parchment);
+      margin-bottom: var(--sp-4);
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease 0.45s forwards;
+    }
+
+    .hero__headline strong {
+      font-weight: 700;
+      color: var(--clr-sand);
+      display: block;
+    }
+
+    .hero__headline em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--clr-sage);
+    }
+
+    .hero__body {
+      font-size: var(--fs-md);
+      font-weight: 300;
+      color: rgba(242, 236, 224, 0.78);
+      max-width: 44ch;
+      line-height: 1.75;
+      margin-bottom: var(--sp-6);
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease 0.6s forwards;
+    }
+
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--sp-2);
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease 0.75s forwards;
+    }
+
+    .hero__trust {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      margin-top: var(--sp-8);
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease 0.9s forwards;
+    }
+    .hero__trust-divider {
+      width: 1px;
+      height: 36px;
+      background: rgba(242,236,224,0.2);
+    }
+    .hero__trust-item {
+      text-align: left;
+    }
+    .hero__trust-item strong {
+      display: block;
+      font-family: var(--ff-display);
+      font-size: var(--fs-xl);
+      font-weight: 700;
+      color: var(--clr-sand);
+      line-height: 1;
+    }
+    .hero__trust-item span {
+      font-size: var(--fs-xs);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(242,236,224,0.55);
+    }
+
+    /* Right column — image mosaic */
+    .hero__media {
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1.1s ease 0.5s forwards;
+    }
+
+    .hero__media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(100deg, var(--clr-forest) 0%, rgba(42,64,53,0.35) 40%, transparent 100%);
+      z-index: 1;
+    }
+
+    .hero__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.04);
+      transition: transform 8s ease;
+    }
+    .hero__media:hover img { transform: scale(1); }
+
+    /* Decorative leaf SVG — bottom left */
+    .hero__leaf {
+      position: absolute;
+      bottom: -20px;
+      left: -30px;
+      width: 280px;
+      opacity: 0.06;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Scroll indicator */
+    .hero__scroll {
+      position: absolute;
+      bottom: var(--sp-5);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-1);
+      color: rgba(242,236,224,0.45);
+      font-size: var(--fs-xs);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 1s ease 1.2s forwards;
+    }
+    .hero__scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(242,236,224,0.45), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    /* =========================================================
+       SERVICES SECTION
+    ========================================================= */
+    #services {
+      background-color: var(--clr-parchment);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background botanical watermark */
+    #services::before {
+      content: '';
+      position: absolute;
+      right: -100px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(139,175,124,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .services__header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-6);
+      align-items: end;
+      margin-bottom: var(--sp-10);
+    }
+
+    .services__header-cta {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+    }
+
+    /* Services grid */
+    .services__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+    }
+
+    /* Service card */
+    .service-card {
+      background: var(--clr-cream);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .service-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Image container with overlay */
+    .service-card__img-wrap {
+      position: relative;
+      height: 240px;
+      overflow: hidden;
+    }
+
+    .service-card__img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .service-card:hover .service-card__img-wrap img {
+      transform: scale(1.07);
+    }
+
+    /* Number badge */
+    .service-card__num {
+      position: absolute;
+      top: var(--sp-2);
+      left: var(--sp-2);
+      width: 36px;
+      height: 36px;
+      background: var(--clr-clay);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--ff-display);
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      color: var(--clr-white);
+      z-index: 2;
+    }
+
+    /* Green overlay on hover */
+    .service-card__overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(42,64,53,0.55);
+      opacity: 0;
+      transition: opacity var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+    .service-card:hover .service-card__overlay { opacity: 1; }
+
+    .service-card__overlay-cta {
+      color: var(--clr-cream);
+      font-family: var(--ff-body);
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1.5px solid rgba(242,236,224,0.7);
+      padding: 0.55em 1.4em;
+      border-radius: var(--radius-full);
+      transition: background var(--transition);
+    }
+    .service-card:hover .service-card__overlay-cta:hover {
+      background: rgba(242,236,224,0.2);
+    }
+
+    .service-card__body {
+      padding: var(--sp-4);
+    }
+
+    .service-card__icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(42,64,53,0.08);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--sp-2);
+    }
+    .service-card__icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--clr-forest);
+    }
+
+    .service-card__title {
+      font-family: var(--ff-display);
+      font-size: var(--fs-lg);
+      font-weight: 600;
+      color: var(--clr-forest);
+      line-height: 1.25;
+      margin-bottom: var(--sp-1);
+    }
+
+    .service-card__desc {
+      font-size: var(--fs-sm);
+      color: #7A6A55;
+      line-height: 1.7;
+    }
+
+    /* =========================================================
+       ABOUT SECTION
+    ========================================================= */
+    #about {
+      background-color: var(--clr-cream);
+      position: relative;
+    }
+
+    .about__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-12);
+      align-items: center;
+    }
+
+    /* Image side */
+    .about__media {
+      position: relative;
+    }
+
+    .about__img-main {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Floating accent image */
+    .about__img-accent {
+      position: absolute;
+      bottom: -var(--sp-4);
+      right: -var(--sp-6);
+      width: 48%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      border: 6px solid var(--clr-cream);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Experience badge */
+    .about__badge {
+      position: absolute;
+      top: var(--sp-4);
+      right: -var(--sp-4);
+      width: 110px;
+      height: 110px;
+      background: var(--clr-clay);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--clr-white);
+      box-shadow: var(--shadow-md);
+    }
+    .about__badge strong {
+      font-family: var(--ff-display);
+      font-size: var(--fs-2xl);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .about__badge span {
+      font-size: var(--fs-xs);
+      text-align: center;
+      opacity: 0.9;
+      line-height: 1.2;
+    }
+
+    /* Text side */
+    .about__text {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-4);
+    }
+
+    .about__values {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-2);
+      margin-top: var(--sp-2);
+    }
+
+    .about__value {
+      background: var(--clr-parchment);
+      border-radius: var(--radius-md);
+      padding: var(--sp-3);
+      border-left: 3px solid var(--clr-sage);
+    }
+    .about__value h4 {
+      font-family: var(--ff-display);
+      font-size: var(--fs-base);
+      font-weight: 700;
+      color: var(--clr-forest);
+      margin-bottom: 4px;
+    }
+    .about__value p {
+      font-size: var(--fs-xs);
+      color: #7A6A55;
+      line-height: 1.6;
+    }
+
+    /* Team */
+    .about__team {
+      margin-top: var(--sp-8);
+    }
+
+    .about__team-title {
+      font-family: var(--ff-display);
+      font-size: var(--fs-xl);
+      font-weight: 600;
+      color: var(--clr-forest);
+      margin-bottom: var(--sp-4);
+    }
+
+    .about__team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+    }
+
+    .team-card {
+      text-align: center;
+    }
+
+    .team-card__img-wrap {
+      width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--sp-2);
+      position: relative;
+    }
+
+    .team-card__img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      transition: transform 0.6s ease;
+    }
+
+    .team-card:hover .team-card__img-wrap img {
+      transform: scale(1.06);
+    }
+
+    /* Green bottom gradient on team image */
+    .team-card__img-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(to top, rgba(42,64,53,0.35), transparent);
+    }
+
+    .team-card h4 {
+      font-family: var(--ff-display);
+      font-size: var(--fs-md);
+      font-weight: 700;
+      color: var(--clr-forest);
+      line-height: 1.2;
+    }
+    .team-card span {
+      font-size: var(--fs-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--clr-clay);
+    }
+
+    /* =========================================================
+       BANNER — full-width quote/CTA strip
+    ========================================================= */
+    .banner {
+      background: var(--clr-forest);
+      padding: var(--sp-12) 0;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238BAF7C' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .banner__inner {
+      position: relative;
+      z-index: 1;
+    }
+    .banner__quote {
+      font-family: var(--ff-display);
+      font-size: clamp(var(--fs-xl), 3vw, var(--fs-3xl));
+      font-weight: 300;
+      font-style: italic;
+      color: var(--clr-sand);
+      max-width: 700px;
+      margin-inline: auto;
+      line-height: 1.35;
+      margin-bottom: var(--sp-5);
+    }
+    .banner__quote strong {
+      font-weight: 600;
+      color: var(--clr-parchment);
+      font-style: normal;
+    }
+
+    /* =========================================================
+       CONTACT SECTION
+    ========================================================= */
+    #contact {
+      background-color: var(--clr-parchment);
+    }
+
+    .contact__grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: var(--sp-12);
+      align-items: start;
+    }
+
+    /* Left side info */
+    .contact__info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+
+    .contact__item {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: flex-start;
+    }
+    .contact__item-icon {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      background: rgba(42,64,53,0.08);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .contact__item-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--clr-forest);
+    }
+    .contact__item-text h4 {
+      font-family: var(--ff-display);
+      font-size: var(--fs-base);
+      font-weight: 700;
+      color: var(--clr-forest);
+      margin-bottom: 2px;
+    }
+    .contact__item-text p {
+      font-size: var(--fs-sm);
+      color: #7A6A55;
+    }
+
+    /* Form */
+    .contact__form-wrap {
+      background: var(--clr-cream);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-8);
+      box-shadow: var(--shadow-md);
+    }
+
+    .form-group {
+      margin-bottom: var(--sp-4);
+    }
+
+    .form-group label {
+      display: block;
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--clr-forest);
+      margin-bottom: var(--sp-1);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.85em 1.2em;
+      background: var(--clr-parchment);
+      border: 1.5px solid rgba(42,64,53,0.15);
+      border-radius: var(--radius-md);
+      font-family: var(--ff-body);
+      font-size: var(--fs-base);
+      color: var(--clr-soil);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--clr-moss);
+      box-shadow: 0 0 0 3px rgba(74,103,65,0.12);
+    }
+
+    /* Input validation visual feedback */
+    .form-group input:invalid:not(:placeholder-shown),
+    .form-group textarea:invalid:not(:placeholder-shown) {
+      border-color: #C0392B;
+    }
+    .form-group input:valid:not(:placeholder-shown) {
+      border-color: var(--clr-sage);
+    }
+
+    .form-group textarea { min-height: 130px; }
+
+    /* Two-column row inside form */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-3);
+    }
+
+    /* Submit button — full width */
+    .form-submit {
+      width: 100%;
+      padding: 1em;
+      background: var(--clr-forest);
+      color: var(--clr-cream);
+      border: none;
+      border-radius: var(--radius-full);
+      font-family: var(--ff-body);
+      font-size: var(--fs-base);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-1);
+    }
+    .form-submit:hover {
+      background: var(--clr-moss);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(42,64,53,0.25);
+    }
+    .form-submit:active { transform: scale(0.98); }
+
+    /* Success message */
+    .form-success {
+      display: none;
+      align-items: center;
+      gap: var(--sp-2);
+      background: rgba(139,175,124,0.15);
+      border: 1.5px solid var(--clr-sage);
+      border-radius: var(--radius-md);
+      padding: var(--sp-3);
+      margin-top: var(--sp-3);
+      color: var(--clr-forest);
+      font-size: var(--fs-sm);
+    }
+    .form-success.show { display: flex; }
+    .form-success svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--clr-moss);
+      flex-shrink: 0;
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+    footer {
+      background: var(--clr-soil);
+      color: rgba(245,239,228,0.7);
+      padding: var(--sp-10) 0 var(--sp-5);
+    }
+
+    .footer__top {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: var(--sp-8);
+      padding-bottom: var(--sp-8);
+      border-bottom: 1px solid rgba(245,239,228,0.1);
+      margin-bottom: var(--sp-5);
+    }
+
+    .footer__brand p {
+      font-size: var(--fs-sm);
+      line-height: 1.7;
+      margin-top: var(--sp-2);
+      max-width: 30ch;
+    }
+
+    .footer__logo {
+      font-family: var(--ff-display);
+      font-size: var(--fs-xl);
+      font-weight: 700;
+      color: var(--clr-sand);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: var(--sp-2);
+    }
+
+    .footer__col h5 {
+      font-family: var(--ff-body);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--clr-sand);
+      margin-bottom: var(--sp-3);
+    }
+
+    .footer__col a {
+      display: block;
+      font-size: var(--fs-sm);
+      color: rgba(245,239,228,0.6);
+      margin-bottom: var(--sp-1);
+      transition: color var(--transition);
+    }
+    .footer__col a:hover { color: var(--clr-sand); }
+
+    .footer__bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--fs-xs);
+      flex-wrap: wrap;
+      gap: var(--sp-2);
+    }
+
+    .footer__social {
+      display: flex;
+      gap: var(--sp-2);
+    }
+    .footer__social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(245,239,228,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .footer__social a:hover {
+      border-color: var(--clr-sand);
+      background: rgba(226,201,154,0.1);
+    }
+    .footer__social svg {
+      width: 15px;
+      height: 15px;
+      stroke: rgba(245,239,228,0.65);
+    }
+
+    /* =========================================================
+       KEYFRAME ANIMATIONS
+    ========================================================= */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.15); }
+    }
+
+    /* =========================================================
+       RESPONSIVE — TABLET (≤900px)
+    ========================================================= */
+    @media (max-width: 900px) {
+      #home {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .hero__content {
+        padding: calc(80px + var(--sp-10)) var(--sp-5) var(--sp-8);
+        text-align: center;
+        align-items: center;
+      }
+
+      .hero__body { max-width: 100%; }
+
+      .hero__media {
+        height: 55vw;
+        min-height: 320px;
+      }
+      .hero__media::after {
+        background: linear-gradient(to bottom, var(--clr-forest) 0%, rgba(42,64,53,0) 40%);
+      }
+
+      .hero__trust {
+        justify-content: center;
+      }
+
+      .services__header {
+        grid-template-columns: 1fr;
+        gap: var(--sp-3);
+      }
+      .services__header-cta { justify-content: flex-start; }
+
+      .services__grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .about__grid {
+        grid-template-columns: 1fr;
+        gap: var(--sp-8);
+      }
+      .about__media { max-width: 480px; margin-inline: auto; }
+
+      .about__team-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .contact__grid {
+        grid-template-columns: 1fr;
+        gap: var(--sp-8);
+      }
+
+      .footer__top {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--sp-6);
+      }
+      .footer__brand { grid-column: 1 / -1; }
+    }
+
+    /* =========================================================
+       RESPONSIVE — MOBILE (≤600px)
+    ========================================================= */
+    @media (max-width: 600px) {
+      .section-padding { padding-block: var(--sp-12); }
+
+      .navbar__links { display: none; }
+      .navbar__hamburger { display: flex; }
+      .navbar__mobile { display: flex; }
+
+      .hero__trust {
+        flex-wrap: wrap;
+        gap: var(--sp-3);
+      }
+      .hero__trust-divider { display: none; }
+
+      .services__grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about__values {
+        grid-template-columns: 1fr;
+      }
+
+      .about__team-grid {
+        grid-template-columns: 1fr;
+        max-width: 300px;
+        margin-inline: auto;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .contact__form-wrap {
+        padding: var(--sp-5);
+      }
+
+      .footer__top {
+        grid-template-columns: 1fr;
+        gap: var(--sp-5);
+      }
+      .footer__brand { grid-column: 1; }
+
+      .footer__bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .about__img-accent {
+        right: -10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =====================================================
+       NAVIGATION
+  ===================================================== -->
+  <nav class="navbar" id="navbar" aria-label="Main navigation">
+    <div class="container navbar__inner">
+
+      <!-- Logo -->
+      <a href="#home" class="navbar__logo" aria-label="GreenCraft Home">
+        <!-- Leaf SVG logo mark -->
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="20" cy="20" r="19" fill="#2A4035"/>
+          <path d="M20 32C20 32 10 24 10 17C10 11.477 14.477 7 20 7C25.523 7 30 11.477 30 17C30 24 20 32 20 32Z" fill="#8BAF7C"/>
+          <line x1="20" y1="32" x2="20" y2="17" stroke="#F5EFE4" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="20" y1="22" x2="15" y2="17" stroke="#F5EFE4" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="20" y1="26" x2="25" y2="21" stroke="#F5EFE4" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        GreenCraft
+      </a>
+
+      <!-- Desktop links -->
+      <ul class="navbar__links" role="list">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+
+      <!-- Desktop CTA -->
+      <a href="#contact" class="btn btn-primary" style="display:none;" id="nav-cta">Get a Quote</a>
+
+      <!-- Hamburger (mobile) -->
+      <button class="navbar__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <nav class="navbar__mobile" id="mobile-menu" aria-label="Mobile navigation" aria-hidden="true">
+    <a href="#home" class="mobile-nav-link">Home</a>
+    <a href="#services" class="mobile-nav-link">Services</a>
+    <a href="#about" class="mobile-nav-link">About Us</a>
+    <a href="#contact" class="mobile-nav-link">Contact</a>
+    <a href="#contact" class="btn btn-clay btn-lg">Get a Quote</a>
+  </nav>
+
+
+  <!-- =====================================================
+       HERO SECTION
+  ===================================================== -->
+  <section id="home" aria-label="Hero">
+
+    <!-- Text content -->
+    <div class="hero__content">
+      <p class="hero__eyebrow">Professional Garden & Property Care</p>
+
+      <h1 class="hero__headline">
+        We Nurture<br>
+        <strong>Nature's</strong>
+        <em>Best.</em>
+      </h1>
+
+      <p class="hero__body">
+        A dedicated team of horticulture specialists committed to keeping your outdoor spaces beautiful, thriving, and impeccably maintained — season after season.
+      </p>
+
+      <div class="hero__actions">
+        <a href="#contact" class="btn btn-clay btn-lg">
+          <!-- Arrow icon -->
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8H13M13 8L8 3M13 8L8 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Get a Free Quote
+        </a>
+        <a href="#services" class="btn btn-outline" style="border-color:rgba(242,236,224,0.5); color:var(--clr-parchment);">
+          Our Services
+        </a>
+      </div>
+
+      <!-- Trust indicators -->
+      <div class="hero__trust" role="list" aria-label="Trust indicators">
+        <div class="hero__trust-item" role="listitem">
+          <strong>15+</strong>
+          <span>Years Experience</span>
+        </div>
+        <div class="hero__trust-divider" aria-hidden="true"></div>
+        <div class="hero__trust-item" role="listitem">
+          <strong>400+</strong>
+          <span>Happy Clients</span>
+        </div>
+        <div class="hero__trust-divider" aria-hidden="true"></div>
+        <div class="hero__trust-item" role="listitem">
+          <strong>100%</strong>
+          <span>Eco-Friendly</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero image -->
+    <div class="hero__media">
+      <img
+        src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80&auto=format&fit=crop"
+        alt="Lush, well-maintained garden with vibrant green plants and neat pathways"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+
+    <!-- Decorative leaf background element -->
+    <svg class="hero__leaf" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M200 480C200 480 30 360 30 200C30 90 110 10 200 10C290 10 370 90 370 200C370 360 200 480 200 480Z" fill="white"/>
+      <line x1="200" y1="480" x2="200" y2="200" stroke="white" stroke-width="3"/>
+      <line x1="200" y1="300" x2="100" y2="200" stroke="white" stroke-width="2.5"/>
+      <line x1="200" y1="350" x2="300" y2="250" stroke="white" stroke-width="2.5"/>
+      <line x1="200" y1="250" x2="120" y2="150" stroke="white" stroke-width="2"/>
+    </svg>
+
+    <!-- Scroll indicator -->
+    <div class="hero__scroll" aria-hidden="true">
+      <div class="hero__scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       SERVICES SECTION
+  ===================================================== -->
+  <section id="services" class="section-padding" aria-labelledby="services-heading">
+    <div class="container">
+
+      <!-- Section header -->
+      <div class="services__header">
+        <div>
+          <span class="section-tag reveal">What We Do</span>
+          <h2 class="section-headline reveal delay-1" id="services-heading">
+            Expert Care for<br><em>Every Green Space</em>
+          </h2>
+          <p class="section-subtext reveal delay-2" style="margin-top:1rem;">
+            From delicate pruning to complex irrigation — we bring professional expertise, the right tools, and genuine love for plants to every project.
+          </p>
+        </div>
+        <div class="services__header-cta reveal delay-3">
+          <a href="#contact" class="btn btn-outline">Request a Service</a>
+        </div>
+      </div>
+
+      <!-- Services grid -->
+      <div class="services__grid" role="list">
+
+        <!-- Card 1: Pruning -->
+        <article class="service-card reveal" role="listitem">
+          <div class="service-card__img-wrap">
+            <span class="service-card__num" aria-hidden="true">01</span>
+            <img
+              src="https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=700&q=75&auto=format&fit=crop"
+              alt="Professional pruning of hedges and ornamental shrubs"
+              loading="lazy"
+            />
+            <div class="service-card__overlay" aria-hidden="true">
+              <span class="service-card__overlay-cta">Learn More</span>
+            </div>
+          </div>
+          <div class="service-card__body">
+            <div class="service-card__icon" aria-hidden="true">
+              <!-- Scissors/pruning icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M6 20a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M21 4 6.5 14.5"/><path d="M21 20 6.5 9.5"/></svg>
+            </div>
+            <h3 class="service-card__title">Pruning of All Types & Species</h3>
+            <p class="service-card__desc">Precise pruning for trees, shrubs, hedges, and all plant species. We shape, thin, and rejuvenate your plants to promote healthy growth and beautiful form — regardless of size or species.</p>
+          </div>
+        </article>
+
+        <!-- Card 2: Repotting -->
+        <article class="service-card reveal delay-1" role="listitem">
+          <div class="service-card__img-wrap">
+            <span class="service-card__num" aria-hidden="true">02</span>
+            <img
+              src="https://images.unsplash.com/photo-1585814084488-0fc5bd4e396a?w=700&q=75&auto=format&fit=crop"
+              alt="Repotting a large plant into a new planter with fresh soil"
+              loading="lazy"
+            />
+            <div class="service-card__overlay" aria-hidden="true">
+              <span class="service-card__overlay-cta">Learn More</span>
+            </div>
+          </div>
+          <div class="service-card__body">
+            <div class="service-card__icon" aria-hidden="true">
+              <!-- Pot/plant icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1H8V6a4 4 0 0 1 4-4z"/><path d="M5 7h14l-1.5 10H6.5L5 7z"/><line x1="9" y1="17" x2="9" y2="21"/><line x1="15" y1="17" x2="15" y2="21"/><line x1="7" y1="21" x2="17" y2="21"/></svg>
+            </div>
+            <h3 class="service-card__title">Repotting Planters of Any Size</h3>
+            <p class="service-card__desc">From small indoor pots to monumental terrace planters — we carefully repot every vessel, refreshing soil, treating roots, and re-establishing your plants in their ideal new home.</p>
+          </div>
+        </article>
+
+        <!-- Card 3: Irrigation -->
+        <article class="service-card reveal delay-2" role="listitem">
+          <div class="service-card__img-wrap">
+            <span class="service-card__num" aria-hidden="true">03</span>
+            <img
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=75&auto=format&fit=crop"
+              alt="Irrigation system installation with sprinklers in a garden"
+              loading="lazy"
+            />
+            <div class="service-card__overlay" aria-hidden="true">
+              <span class="service-card__overlay-cta">Learn More</span>
+            </div>
+          </div>
+          <div class="service-card__body">
+            <div class="service-card__icon" aria-hidden="true">
+              <!-- Droplet/water icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            </div>
+            <h3 class="service-card__title">Irrigation System Installation & Adjustment</h3>
+            <p class="service-card__desc">Expert installation, calibration, and seasonal adjustment of drip, sprinkler, and soaker irrigation systems. We ensure every zone gets exactly the water it needs — efficiently and on schedule.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       FULL-WIDTH BANNER
+  ===================================================== -->
+  <div class="banner" role="complementary" aria-label="Brand message">
+    <div class="container banner__inner">
+      <p class="banner__quote reveal">
+        "The garden is not a place you arrive at —<br>
+        <strong>it's a living work you tend with patience and love.</strong>"
+      </p>
+      <a href="#contact" class="btn btn-clay btn-lg reveal delay-1">Start Your Project Today</a>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       ABOUT SECTION
+  ===================================================== -->
+  <section id="about" class="section-padding" aria-labelledby="about-heading">
+    <div class="container">
+
+      <div class="about__grid">
+
+        <!-- Image side -->
+        <div class="about__media reveal-left">
+          <img
+            class="about__img-main"
+            src="https://images.unsplash.com/photo-1453928582365-b6ad33cbcf64?w=900&q=80&auto=format&fit=crop"
+            alt="Gardener carefully tending to plants in a lush green garden"
+            loading="lazy"
+          />
+          <!-- Floating secondary image -->
+          <img
+            class="about__img-accent"
+            src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500&q=75&auto=format&fit=crop"
+            alt="Close-up of hands working with soil and young plant seedlings"
+            loading="lazy"
+            style="position:absolute; bottom:-24px; right:-24px; width:48%; border-radius:var(--radius-md); border:6px solid var(--clr-cream); box-shadow:var(--shadow-md);"
+          />
+          <!-- Years badge -->
+          <div class="about__badge" aria-label="15 years of experience">
+            <strong>15+</strong>
+            <span>Years of<br>Craft</span>
+          </div>
+        </div>
+
+        <!-- Text side -->
+        <div class="about__text reveal-right">
+          <span class="section-tag">Our Story</span>
+          <h2 class="section-headline" id="about-heading">
+            Rooted in Passion,<br><em>Grown with Purpose</em>
+          </h2>
+          <p class="section-subtext">
+            GreenCraft was born from a simple belief: that every outdoor space deserves devoted, expert care. Founded over 15 years ago by a team of certified horticulturists, we've grown from a small local operation into a trusted partner for homeowners, businesses, and estates across the region.
+          </p>
+          <p class="section-subtext" style="margin-top:1rem;">
+            We combine old-world botanical knowledge with modern techniques — bringing reliability, ecological responsibility, and an uncompromising attention to detail to every single project we undertake.
+          </p>
+
+          <!-- Core values grid -->
+          <div class="about__values" aria-label="Our core values">
+            <div class="about__value">
+              <h4>Craftsmanship</h4>
+              <p>Precise, considered work on every plant and space we touch.</p>
+            </div>
+            <div class="about__value">
+              <h4>Reliability</h4>
+              <p>On time, every time. You can count on us all year round.</p>
+            </div>
+            <div class="about__value">
+              <h4>Ecology</h4>
+              <p>We use only organic, eco-friendly products and methods.</p>
+            </div>
+            <div class="about__value">
+              <h4>Passion</h4>
+              <p>We genuinely love plants — and it shows in everything we do.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Team subsection -->
+      <div class="about__team">
+        <h3 class="about__team-title reveal">Meet the Team</h3>
+        <div class="about__team-grid">
+
+          <!-- Team member 1 -->
+          <div class="team-card reveal">
+            <div class="team-card__img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=75&auto=format&fit=crop&crop=face"
+                alt="Marco Ferretti, Lead Horticulturist"
+                loading="lazy"
+              />
+            </div>
+            <h4>Marco Ferretti</h4>
+            <span>Lead Horticulturist</span>
+          </div>
+
+          <!-- Team member 2 -->
+          <div class="team-card reveal delay-1">
+            <div class="team-card__img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=75&auto=format&fit=crop&crop=face"
+                alt="Elena Ricci, Landscape Designer"
+                loading="lazy"
+              />
+            </div>
+            <h4>Elena Ricci</h4>
+            <span>Landscape Designer</span>
+          </div>
+
+          <!-- Team member 3 -->
+          <div class="team-card reveal delay-2">
+            <div class="team-card__img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=75&auto=format&fit=crop&crop=face"
+                alt="Davide Costa, Irrigation Specialist"
+                loading="lazy"
+              />
+            </div>
+            <h4>Davide Costa</h4>
+            <span>Irrigation Specialist</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       CONTACT SECTION
+  ===================================================== -->
+  <section id="contact" class="section-padding" aria-labelledby="contact-heading">
+    <div class="container">
+
+      <div style="text-align:center; margin-bottom:var(--sp-10);">
+        <span class="section-tag reveal" style="justify-content:center;">Get In Touch</span>
+        <h2 class="section-headline reveal delay-1" id="contact-heading" style="margin-inline:auto;">
+          Let's Bring Your Garden<br><em>to Life</em>
+        </h2>
+        <p class="section-subtext reveal delay-2" style="margin-inline:auto; margin-top:1rem; text-align:center;">
+          Tell us about your space. We'll get back to you within 24 hours with a personalised plan and free estimate.
+        </p>
+      </div>
+
+      <div class="contact__grid">
+
+        <!-- Left: contact info -->
+        <div class="contact__info reveal-left">
+
+          <div class="contact__item">
+            <div class="contact__item-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="contact__item-text">
+              <h4>Our Location</h4>
+              <p>Via delle Rose 12, Milan, Italy</p>
+            </div>
+          </div>
+
+          <div class="contact__item">
+            <div class="contact__item-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.58 3.09 2 2 0 0 1 3.55 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="contact__item-text">
+              <h4>Phone</h4>
+              <p>+39 02 1234 5678</p>
+            </div>
+          </div>
+
+          <div class="contact__item">
+            <div class="contact__item-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="contact__item-text">
+              <h4>Email</h4>
+              <p>hello@greencraft-garden.it</p>
+            </div>
+          </div>
+
+          <div class="contact__item">
+            <div class="contact__item-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="contact__item-text">
+              <h4>Working Hours</h4>
+              <p>Monday–Saturday: 8:00–18:00<br>Sunday: By appointment</p>
+            </div>
+          </div>
+
+          <!-- Decorative badge -->
+          <div style="background:var(--clr-forest); border-radius:var(--radius-lg); padding:var(--sp-4); margin-top:var(--sp-2);">
+            <p style="font-family:var(--ff-display); font-size:var(--fs-md); color:var(--clr-sand); font-style:italic; line-height:1.55;">
+              "Every great garden starts with one conversation. We'd love to hear about yours."
+            </p>
+            <p style="font-size:var(--fs-xs); color:rgba(226,201,154,0.6); margin-top:var(--sp-2); letter-spacing:0.08em; text-transform:uppercase;">— The GreenCraft Team</p>
+          </div>
+
+        </div>
+
+        <!-- Right: form -->
+        <div class="contact__form-wrap reveal-right">
+          <form id="contact-form" novalidate aria-label="Contact form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Your name"
+                  required
+                  minlength="2"
+                  autocomplete="name"
+                  aria-required="true"
+                />
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="your@email.com"
+                  required
+                  autocomplete="email"
+                  aria-required="true"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="service">Service of Interest</label>
+              <select id="service" name="service">
+                <option value="" disabled selected>Select a service…</option>
+                <option value="pruning">Pruning — Plants &amp; Trees</option>
+                <option value="repotting">Repotting — Planters</option>
+                <option value="irrigation">Irrigation System</option>
+                <option value="other">General Maintenance / Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message *</label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Tell us about your garden, project, or any questions you have…"
+                required
+                minlength="10"
+                aria-required="true"
+              ></textarea>
+            </div>
+
+            <!-- Honeypot field (hidden from humans, traps bots) -->
+            <input type="text" name="_honey" style="display:none;" tabindex="-1" autocomplete="off" />
+
+            <button type="submit" class="form-submit">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              Send Message
+            </button>
+
+            <!-- Success message -->
+            <div class="form-success" id="form-success" role="alert" aria-live="polite">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Thank you! Your message has been received. We'll be in touch within 24 hours.</span>
+            </div>
+
+            <!-- Error message -->
+            <div id="form-error" style="display:none; color:#C0392B; font-size:var(--fs-sm); margin-top:var(--sp-2);" role="alert" aria-live="polite">
+              Please fill in all required fields correctly.
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       FOOTER
+  ===================================================== -->
+  <footer role="contentinfo">
+    <div class="container">
+      <div class="footer__top">
+
+        <!-- Brand column -->
+        <div class="footer__brand">
+          <div class="footer__logo" aria-label="GreenCraft">
+            <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20 38C20 38 5 28 5 17C5 9 11.5 2 20 2C28.5 2 35 9 35 17C35 28 20 38 20 38Z" fill="#8BAF7C"/>
+              <line x1="20" y1="38" x2="20" y2="17" stroke="#F5EFE4" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            GreenCraft
+          </div>
+          <p>Professional gardening & property maintenance — bringing expertise, passion, and eco-conscious care to every outdoor space.</p>
+        </div>
+
+        <!-- Quick links -->
+        <div class="footer__col">
+          <h5>Navigation</h5>
+          <a href="#home">Home</a>
+          <a href="#services">Services</a>
+          <a href="#about">About Us</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <!-- Services -->
+        <div class="footer__col">
+          <h5>Services</h5>
+          <a href="#services">Plant Pruning</a>
+          <a href="#services">Planter Repotting</a>
+          <a href="#services">Irrigation Systems</a>
+          <a href="#contact">Seasonal Clean-Up</a>
+        </div>
+
+        <!-- Contact -->
+        <div class="footer__col">
+          <h5>Contact</h5>
+          <a href="mailto:hello@greencraft-garden.it">hello@greencraft-garden.it</a>
+          <a href="tel:+390212345678">+39 02 1234 5678</a>
+          <a href="#contact">Via delle Rose 12,<br>Milan, Italy</a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="footer__bottom">
+        <p>© 2025 GreenCraft Garden &amp; Maintenance. All rights reserved.</p>
+
+        <!-- Social icons -->
+        <div class="footer__social" aria-label="Social media links">
+          <a href="#" aria-label="Follow us on Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" aria-label="Follow us on Facebook">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="Follow us on LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+        </div>
+
+        <p>Designed with 🌿 and care.</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- =====================================================
+       JAVASCRIPT — Navbar, Mobile Menu, Scroll Animations, Form
+  ===================================================== -->
+  <script>
+    /* -------------------------------------------------------
+       1. NAVBAR — scroll behaviour
+    ------------------------------------------------------- */
+    const navbar  = document.getElementById('navbar');
+    const navCta  = document.getElementById('nav-cta');
+
+    // Show nav CTA after scrolling past hero
+    function handleNavbar() {
+      const scrolled = window.scrollY > 60;
+      navbar.classList.toggle('scrolled', scrolled);
+      // Show CTA button once scrolled
+      if (scrolled) {
+        navCta.style.display = 'inline-flex';
+      } else {
+        navCta.style.display = 'none';
+      }
+    }
+
+    window.addEventListener('scroll', handleNavbar, { passive: true });
+    handleNavbar(); // run on load
+
+    /* -------------------------------------------------------
+       2. MOBILE MENU — hamburger toggle
+    ------------------------------------------------------- */
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+      mobileMenu.setAttribute('aria-hidden', !isOpen);
+      // Prevent body scroll when menu open
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    // Close menu when a link is clicked
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', false);
+        mobileMenu.setAttribute('aria-hidden', true);
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+
+    /* -------------------------------------------------------
+       3. SCROLL-TRIGGERED ANIMATIONS (IntersectionObserver)
+    ------------------------------------------------------- */
+    const revealEls = document.querySelectorAll(
+      '.reveal, .reveal-left, .reveal-right'
+    );
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Once visible, stop observing (fire once)
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      root: null,
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    /* -------------------------------------------------------
+       4. CONTACT FORM — validation & simulated submission
+    ------------------------------------------------------- */
+    const contactForm   = document.getElementById('contact-form');
+    const formSuccess   = document.getElementById('form-success');
+    const formError     = document.getElementById('form-error');
+    const submitBtn     = contactForm.querySelector('.form-submit');
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Hide previous messages
+      formSuccess.classList.remove('show');
+      formError.style.display = 'none';
+
+      // Check HTML5 validity
+      if (!contactForm.checkValidity()) {
+        formError.style.display = 'block';
+        // Trigger browser native validation UI
+        contactForm.reportValidity();
+        return;
+      }
+
+      // Honeypot check
+      if (contactForm._honey.value !== '') return;
+
+      // Simulate async submission (replace with real fetch in production)
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="animation:spin 0.8s linear infinite;">
+          <circle cx="12" cy="12" r="10" stroke-dasharray="60" stroke-dashoffset="45"/>
+        </svg>
+        Sending…
+      `;
+
+      setTimeout(() => {
+        // Show success message
+        formSuccess.classList.add('show');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          Send Message
+        `;
+        contactForm.reset();
+
+        // Auto-hide success after 6s
+        setTimeout(() => {
+          formSuccess.classList.remove('show');
+        }, 6000);
+      }, 1400);
+    });
+
+    /* -------------------------------------------------------
+       5. SMOOTH ACTIVE NAV LINK HIGHLIGHTING
+    ------------------------------------------------------- */
+    const sections   = document.querySelectorAll('section[id], div[id]');
+    const navLinks   = document.querySelectorAll('.navbar__links a');
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === `#${entry.target.id}`
+              ? 'var(--clr-clay)'
+              : '';
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(sec => sectionObserver.observe(sec));
+
+    /* -------------------------------------------------------
+       6. CSS @keyframes injected for spinner
+    ------------------------------------------------------- */
+    const spinStyle = document.createElement('style');
+    spinStyle.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
+    document.head.appendChild(spinStyle);
+  </script>
+
+</body>
+</html>
