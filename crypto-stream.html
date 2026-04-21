@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CRYPTO STREAM</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #020408;
+    --panel: #050d14;
+    --border: #0f2a3a;
+    --btc: #f7931a;
+    --eth: #627eea;
+    --green: #00e676;
+    --red: #ff1744;
+    --dim: #2a4a5e;
+    --text: #a8d8ea;
+    --mono: 'Share Tech Mono', monospace;
+    --display: 'Bebas Neue', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(15,42,58,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,42,58,0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  header .title {
+    font-family: var(--display);
+    font-size: clamp(3rem, 8vw, 6rem);
+    letter-spacing: 0.15em;
+    background: linear-gradient(90deg, var(--btc), var(--eth));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  header .sub {
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--dim);
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+  }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--dim);
+    transition: background 0.5s;
+  }
+  .dot.live { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
+  .dot.dead { background: var(--red); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Cards grid */
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.8s ease both;
+    transition: border-color 0.3s;
+  }
+  .card:nth-child(2) { animation-delay: 0.15s; }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .card.btc::before { background: var(--btc); box-shadow: 0 0 12px var(--btc); }
+  .card.eth::before { background: var(--eth); box-shadow: 0 0 12px var(--eth); }
+
+  /* Glow effect on update */
+  .card.flash-up { border-color: var(--green) !important; box-shadow: 0 0 20px rgba(0,230,118,0.15); }
+  .card.flash-down { border-color: var(--red) !important; box-shadow: 0 0 20px rgba(255,23,68,0.15); }
+
+  .card-symbol {
+    font-family: var(--display);
+    font-size: 2.5rem;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .card.btc .card-symbol { color: var(--btc); text-shadow: 0 0 20px rgba(247,147,26,0.4); }
+  .card.eth .card-symbol { color: var(--eth); text-shadow: 0 0 20px rgba(98,126,234,0.4); }
+
+  .card-name {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    margin-bottom: 1.5rem;
+  }
+
+  .card-price {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-family: var(--display);
+    letter-spacing: 0.05em;
+    color: #e8f4f8;
+    transition: color 0.3s;
+    min-height: 2.5rem;
+  }
+
+  .card-price.up { color: var(--green); }
+  .card-price.down { color: var(--red); }
+
+  .card-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1px;
+  }
+  .card-change.positive { color: var(--green); background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2); }
+  .card-change.negative { color: var(--red); background: rgba(255,23,68,0.08); border: 1px solid rgba(255,23,68,0.2); }
+  .card-change.neutral { color: var(--dim); background: transparent; border: 1px solid var(--border); }
+
+  .card-meta {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .meta-item label {
+    display: block;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    margin-bottom: 0.2rem;
+  }
+  .meta-item .val {
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+
+  /* Ticker tape */
+  .ticker-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0.6rem 0;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .ticker-inner {
+    display: inline-flex;
+    gap: 0;
+    animation: scrollTicker 28s linear infinite;
+    will-change: transform;
+  }
+
+  .ticker-item {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    padding: 0 2rem;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .ticker-item .t-sym { color: #e8f4f8; }
+  .ticker-item .t-price { color: var(--text); }
+  .ticker-item .t-chg.pos { color: var(--green); }
+  .ticker-item .t-chg.neg { color: var(--red); }
+
+  @keyframes scrollTicker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Sparkline */
+  .sparkline-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    animation: fadeUp 0.8s 0.45s ease both;
+  }
+
+  @media (max-width: 600px) { .sparkline-section { grid-template-columns: 1fr; } }
+
+  .spark-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem 1.25rem;
+  }
+
+  .spark-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    margin-bottom: 0.6rem;
+  }
+
+  canvas.spark {
+    width: 100%;
+    height: 60px;
+    display: block;
+  }
+
+  /* Bottom bar */
+  .bottom-bar {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    animation: fadeUp 0.8s 0.6s ease both;
+  }
+
+  .bottom-bar a { color: var(--dim); text-decoration: none; }
+  .bottom-bar a:hover { color: var(--text); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .loading-text { color: var(--dim); font-size: 0.8rem; letter-spacing: 0.2em; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div class="title">CRYPTO STREAM</div>
+    <div class="sub">Real-Time Market Data · Binance WebSocket Feed</div>
+    <div class="status-bar">
+      <div class="dot" id="statusDot"></div>
+      <span id="statusText">CONNECTING...</span>
+    </div>
+  </header>
+
+  <!-- Ticker tape -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner" id="tickerInner">
+      <!-- duplicated for seamless loop -->
+      <span class="ticker-item"><span class="t-sym">BTC/USDT</span><span class="t-price" id="tk-btc-1">—</span><span class="t-chg" id="tk-btc-chg-1">—</span></span>
+      <span class="ticker-item"><span class="t-sym">ETH/USDT</span><span class="t-price" id="tk-eth-1">—</span><span class="t-chg" id="tk-eth-chg-1">—</span></span>
+      <span class="ticker-item"><span class="t-sym">BTC DOMINANCE</span><span class="t-price" id="tk-dom">~56%</span></span>
+      <span class="ticker-item"><span class="t-sym">BTC/USDT</span><span class="t-price" id="tk-btc-2">—</span><span class="t-chg" id="tk-btc-chg-2">—</span></span>
+      <span class="ticker-item"><span class="t-sym">ETH/USDT</span><span class="t-price" id="tk-eth-2">—</span><span class="t-chg" id="tk-eth-chg-2">—</span></span>
+      <span class="ticker-item"><span class="t-sym">STREAM · LIVE · 24H</span></span>
+    </div>
+  </div>
+
+  <!-- Main cards -->
+  <div class="cards">
+    <!-- BTC Card -->
+    <div class="card btc" id="card-btc">
+      <div class="card-symbol">BTC</div>
+      <div class="card-name">BITCOIN · USDT PAIR</div>
+      <div class="card-price loading-text" id="btc-price">LOADING...</div>
+      <div class="card-change neutral" id="btc-change">—</div>
+      <div class="card-meta">
+        <div class="meta-item"><label>24H HIGH</label><div class="val" id="btc-high">—</div></div>
+        <div class="meta-item"><label>24H LOW</label><div class="val" id="btc-low">—</div></div>
+        <div class="meta-item"><label>VOLUME (BTC)</label><div class="val" id="btc-vol">—</div></div>
+        <div class="meta-item"><label>LAST UPDATE</label><div class="val" id="btc-time">—</div></div>
+      </div>
+    </div>
+
+    <!-- ETH Card -->
+    <div class="card eth" id="card-eth">
+      <div class="card-symbol">ETH</div>
+      <div class="card-name">ETHEREUM · USDT PAIR</div>
+      <div class="card-price loading-text" id="eth-price">LOADING...</div>
+      <div class="card-change neutral" id="eth-change">—</div>
+      <div class="card-meta">
+        <div class="meta-item"><label>24H HIGH</label><div class="val" id="eth-high">—</div></div>
+        <div class="meta-item"><label>24H LOW</label><div class="val" id="eth-low">—</div></div>
+        <div class="meta-item"><label>VOLUME (ETH)</label><div class="val" id="eth-vol">—</div></div>
+        <div class="meta-item"><label>LAST UPDATE</label><div class="val" id="eth-time">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sparklines -->
+  <div class="sparkline-section">
+    <div class="spark-card">
+      <div class="spark-label">BTC · RECENT PRICE HISTORY</div>
+      <canvas class="spark" id="spark-btc" width="400" height="60"></canvas>
+    </div>
+    <div class="spark-card">
+      <div class="spark-label">ETH · RECENT PRICE HISTORY</div>
+      <canvas class="spark" id="spark-eth" width="400" height="60"></canvas>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    DATA SOURCE: <a href="https://www.binance.com" target="_blank">BINANCE WEBSOCKET API</a> · STREAM REFRESHES IN REAL TIME · NO API KEY REQUIRED
+  </div>
+</div>
+
+<script>
+  const MAX_HISTORY = 60;
+  const history = { btc: [], eth: [] };
+
+  const state = {
+    btc: { price: null, prevPrice: null, change: null, high: null, low: null, vol: null },
+    eth: { price: null, prevPrice: null, change: null, high: null, low: null, vol: null }
+  };
+
+  // --- Sparkline drawing ---
+  function drawSparkline(canvasId, data, color) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth * window.devicePixelRatio || 400;
+    const H = canvas.offsetHeight * window.devicePixelRatio || 60;
+    canvas.width = W; canvas.height = H;
+    ctx.clearRect(0, 0, W, H);
+    if (data.length < 2) return;
+
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const range = max - min || 1;
+    const pad = 6;
+
+    const xs = data.map((_, i) => pad + (i / (data.length - 1)) * (W - pad * 2));
+    const ys = data.map(v => H - pad - ((v - min) / range) * (H - pad * 2));
+
+    // Gradient fill
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, color + '44');
+    grad.addColorStop(1, color + '00');
+
+    ctx.beginPath();
+    ctx.moveTo(xs[0], ys[0]);
+    for (let i = 1; i < xs.length; i++) {
+      const cpx = (xs[i - 1] + xs[i]) / 2;
+      ctx.bezierCurveTo(cpx, ys[i - 1], cpx, ys[i], xs[i], ys[i]);
+    }
+    ctx.lineTo(xs[xs.length - 1], H);
+    ctx.lineTo(xs[0], H);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.moveTo(xs[0], ys[0]);
+    for (let i = 1; i < xs.length; i++) {
+      const cpx = (xs[i - 1] + xs[i]) / 2;
+      ctx.bezierCurveTo(cpx, ys[i - 1], cpx, ys[i], xs[i], ys[i]);
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2 * window.devicePixelRatio;
+    ctx.shadowBlur = 8 * window.devicePixelRatio;
+    ctx.shadowColor = color;
+    ctx.stroke();
+
+    // Dot at end
+    ctx.beginPath();
+    ctx.arc(xs[xs.length - 1], ys[ys.length - 1], 4 * window.devicePixelRatio, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.shadowBlur = 10 * window.devicePixelRatio;
+    ctx.fill();
+  }
+
+  // --- Formatters ---
+  function fmt(n, decimals = 2) {
+    return parseFloat(n).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+  function fmtVol(n) {
+    const v = parseFloat(n);
+    if (v >= 1e6) return (v / 1e6).toFixed(2) + 'M';
+    if (v >= 1e3) return (v / 1e3).toFixed(2) + 'K';
+    return v.toFixed(2);
+  }
+  function now() {
+    return new Date().toLocaleTimeString('en-US', { hour12: false });
+  }
+
+  // --- Flash effect ---
+  function flash(cardId, dir) {
+    const card = document.getElementById(cardId);
+    card.classList.remove('flash-up', 'flash-down');
+    void card.offsetWidth;
+    card.classList.add(dir === 'up' ? 'flash-up' : 'flash-down');
+    setTimeout(() => card.classList.remove('flash-up', 'flash-down'), 800);
+  }
+
+  // --- Update UI ---
+  function updateCard(sym, data) {
+    const s = sym.toLowerCase();
+    const price = parseFloat(data.c);
+    const change = parseFloat(data.P);
+    const high = parseFloat(data.h);
+    const low = parseFloat(data.l);
+    const vol = parseFloat(data.v);
+
+    const prev = state[s].price;
+    state[s] = { price, prevPrice: prev, change, high, low, vol };
+
+    // Price element
+    const priceEl = document.getElementById(`${s}-price`);
+    const prefix = s === 'btc' ? '$' : '$';
+    priceEl.textContent = prefix + fmt(price);
+    priceEl.className = 'card-price';
+    if (prev !== null) {
+      if (price > prev) { priceEl.classList.add('up'); flash(`card-${s}`, 'up'); }
+      else if (price < prev) { priceEl.classList.add('down'); flash(`card-${s}`, 'down'); }
+      setTimeout(() => priceEl.className = 'card-price', 600);
+    }
+
+    // Change badge
+    const changeEl = document.getElementById(`${s}-change`);
+    const arrow = change >= 0 ? '▲' : '▼';
+    changeEl.textContent = `${arrow} ${Math.abs(change).toFixed(2)}% 24H`;
+    changeEl.className = `card-change ${change >= 0 ? 'positive' : 'negative'}`;
+
+    // Meta
+    document.getElementById(`${s}-high`).textContent = '$' + fmt(high);
+    document.getElementById(`${s}-low`).textContent = '$' + fmt(low);
+    document.getElementById(`${s}-vol`).textContent = fmtVol(vol);
+    document.getElementById(`${s}-time`).textContent = now();
+
+    // Ticker (both copies for seamless scroll)
+    const chgClass = change >= 0 ? 'pos' : 'neg';
+    const chgText = `${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}%`;
+    ['1', '2'].forEach(n => {
+      const ep = document.getElementById(`tk-${s}-${n}`);
+      const ec = document.getElementById(`tk-${s}-chg-${n}`);
+      if (ep) ep.textContent = '$' + fmt(price);
+      if (ec) { ec.textContent = chgText; ec.className = `t-chg ${chgClass}`; }
+    });
+
+    // History & sparkline
+    history[s].push(price);
+    if (history[s].length > MAX_HISTORY) history[s].shift();
+    drawSparkline(`spark-${s}`, history[s], s === 'btc' ? '#f7931a' : '#627eea');
+  }
+
+  // --- WebSocket ---
+  let ws = null;
+  let reconnectTimer = null;
+
+  function connect() {
+    const endpoint = 'wss://stream.binance.com:9443/stream?streams=btcusdt@ticker/ethusdt@ticker';
+
+    ws = new WebSocket(endpoint);
+
+    ws.onopen = () => {
+      document.getElementById('statusDot').className = 'dot live';
+      document.getElementById('statusText').textContent = 'LIVE STREAM · BINANCE';
+      if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+    };
+
+    ws.onmessage = (evt) => {
+      try {
+        const msg = JSON.parse(evt.data);
+        if (!msg.data) return;
+        const ticker = msg.data;
+        const sym = msg.stream.includes('btc') ? 'BTC' : 'ETH';
+        updateCard(sym, ticker);
+      } catch(e) { console.error('Parse error', e); }
+    };
+
+    ws.onerror = () => {
+      document.getElementById('statusDot').className = 'dot dead';
+      document.getElementById('statusText').textContent = 'CONNECTION ERROR';
+    };
+
+    ws.onclose = () => {
+      document.getElementById('statusDot').className = 'dot dead';
+      document.getElementById('statusText').textContent = 'RECONNECTING...';
+      reconnectTimer = setTimeout(connect, 3000);
+    };
+  }
+
+  connect();
+
+  // Redraw sparklines on resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (history.btc.length) drawSparkline('spark-btc', history.btc, '#f7931a');
+      if (history.eth.length) drawSparkline('spark-eth', history.eth, '#627eea');
+    }, 100);
+  });
+</script>
+</body>
+</html>
