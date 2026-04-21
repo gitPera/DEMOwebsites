@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NeuroLink Systems — Real-time cognitive data dashboards and AI analytics for enterprise decision-making." />
+  <title>NeuroLink Systems | Cognitive AI Analytics</title>
+
+  <!-- =============================================
+       GOOGLE FONTS
+       - Space Mono: monospaced sci-fi feel (body/labels)
+       - Orbitron: futuristic display font (headings)
+  ============================================= -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES — DESIGN TOKENS
+    ============================================= */
+    :root {
+      /* Colors */
+      --bg-void:      #030712;
+      --bg-deep:      #070e1a;
+      --bg-surface:   #0d1829;
+      --bg-glass:     rgba(13, 24, 41, 0.65);
+      --bg-card:      rgba(10, 20, 38, 0.80);
+
+      --cyan:         #00f5d4;
+      --cyan-dim:     rgba(0, 245, 212, 0.15);
+      --cyan-glow:    rgba(0, 245, 212, 0.35);
+      --magenta:      #f020b0;
+      --magenta-dim:  rgba(240, 32, 176, 0.15);
+      --violet:       #a855f7;
+      --violet-dim:   rgba(168, 85, 247, 0.15);
+
+      --text-primary:   #e8f4f8;
+      --text-secondary: #7fa8bc;
+      --text-muted:     #3d6070;
+      --border:         rgba(0, 245, 212, 0.12);
+      --border-bright:  rgba(0, 245, 212, 0.35);
+
+      /* Spacing Scale (8px base) */
+      --s1:  8px;
+      --s2:  16px;
+      --s3:  24px;
+      --s4:  32px;
+      --s5:  40px;
+      --s6:  48px;
+      --s7:  64px;
+      --s8:  80px;
+      --s9:  96px;
+      --s10: 128px;
+
+      /* Typography */
+      --font-display: 'Orbitron', monospace;
+      --font-body:    'Space Mono', monospace;
+
+      /* Transitions */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in:  cubic-bezier(0.4, 0, 1, 1);
+    }
+
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* =============================================
+       UTILITY CLASSES
+    ============================================= */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--s3);
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s1);
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: var(--s3);
+    }
+
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--cyan);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .section-title span {
+      color: var(--cyan);
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      max-width: 540px;
+      margin-top: var(--s2);
+      line-height: 1.8;
+    }
+
+    /* =============================================
+       ANIMATED GRID BACKGROUND PATTERN
+    ============================================= */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 245, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 212, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+    }
+
+    /* Ambient glow orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(100px);
+      opacity: 0.18;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: var(--cyan);
+      top: -200px; right: -100px;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: var(--magenta);
+      bottom: 10%; left: -150px;
+    }
+    .orb-3 {
+      width: 400px; height: 400px;
+      background: var(--violet);
+      top: 40%; right: 20%;
+    }
+
+    /* =============================================
+       NAVIGATION
+    ============================================= */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: var(--s2) 0;
+      transition: background 0.4s var(--ease-out), border-color 0.4s;
+      border-bottom: 1px solid transparent;
+    }
+
+    #nav.scrolled {
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-color: var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Logo */
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+    }
+
+    .nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* SVG Logo mark — neural node */
+    .nav-logo-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .logo-text-accent { color: var(--cyan); }
+
+    /* Nav links */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--s4);
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s var(--ease-out);
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* CTA button in nav */
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s1);
+      padding: 10px var(--s3);
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bg-void);
+      background: var(--cyan);
+      border: 1px solid var(--cyan);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out);
+      box-shadow: 0 0 20px var(--cyan-glow);
+    }
+
+    .nav-cta:hover {
+      background: transparent;
+      color: var(--cyan);
+      box-shadow: 0 0 30px var(--cyan-glow), inset 0 0 20px var(--cyan-dim);
+    }
+
+    /* Hamburger for mobile */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: var(--s1);
+      background: none;
+      border: none;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--cyan);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile nav menu */
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      top: 65px; left: 0; right: 0;
+      background: rgba(3, 7, 18, 0.97);
+      backdrop-filter: blur(20px);
+      padding: var(--s4) var(--s3);
+      border-bottom: 1px solid var(--border);
+      z-index: 999;
+    }
+
+    .nav-mobile.open { display: block; }
+
+    .nav-mobile ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s3);
+    }
+
+    .nav-mobile a {
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      transition: color 0.2s;
+    }
+
+    .nav-mobile a:hover { color: var(--cyan); }
+
+    /* =============================================
+       BUTTONS
+    ============================================= */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s1);
+      padding: 14px var(--s5);
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--bg-void);
+      background: var(--cyan);
+      border: 1px solid var(--cyan);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      box-shadow: 0 0 30px var(--cyan-glow), 0 4px 20px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+      transform: translateX(-100%);
+      transition: transform 0.5s var(--ease-out);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--cyan);
+      box-shadow: 0 0 50px var(--cyan-glow), inset 0 0 30px var(--cyan-dim);
+    }
+
+    .btn-primary:hover::before { transform: translateX(100%); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s1);
+      padding: 14px var(--s5);
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .btn-secondary:hover {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: inset 0 0 20px var(--cyan-dim);
+    }
+
+    /* =============================================
+       SECTION WRAPPER
+    ============================================= */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* =============================================
+       HERO SECTION
+    ============================================= */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 100px;
+      padding-bottom: var(--s10);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s7);
+      align-items: center;
+    }
+
+    /* Hero text column */
+    .hero-text {}
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s1);
+      padding: 6px 14px;
+      background: var(--cyan-dim);
+      border: 1px solid var(--border-bright);
+      border-radius: 2px;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: var(--s3);
+    }
+
+    /* Blinking dot */
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
+    }
+
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--s3);
+    }
+
+    .hero-headline .line-accent { color: var(--cyan); }
+    .hero-headline .line-dim    { color: var(--text-secondary); }
+
+    .hero-description {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      max-width: 440px;
+      line-height: 1.9;
+      margin-bottom: var(--s5);
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      flex-wrap: wrap;
+    }
+
+    /* Hero stats bar */
+    .hero-stats {
+      display: flex;
+      gap: var(--s5);
+      margin-top: var(--s6);
+      padding-top: var(--s4);
+      border-top: 1px solid var(--border);
+    }
+
+    .hero-stat {}
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--cyan);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Hero visual column */
+    .hero-visual {
+      position: relative;
+    }
+
+    .hero-image-wrapper {
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .hero-image-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--cyan-dim) 0%, transparent 50%, var(--magenta-dim) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-image-wrapper img {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s var(--ease-out);
+    }
+
+    .hero-image-wrapper:hover img { transform: scale(1.03); }
+
+    /* Floating HUD elements over hero image */
+    .hero-hud {
+      position: absolute;
+      z-index: 2;
+    }
+
+    .hero-hud-1 {
+      bottom: -20px;
+      left: -24px;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-bright);
+      border-radius: 4px;
+      padding: var(--s2) var(--s3);
+      min-width: 180px;
+    }
+
+    .hero-hud-2 {
+      top: 24px;
+      right: -24px;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--violet-dim);
+      border-left: 2px solid var(--violet);
+      border-radius: 4px;
+      padding: var(--s2) var(--s3);
+    }
+
+    .hud-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .hud-value {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    .hud-value-violet { color: var(--violet); }
+
+    .hud-sparkline {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      margin-top: 8px;
+      height: 24px;
+    }
+
+    .hud-bar {
+      flex: 1;
+      background: var(--cyan-dim);
+      border-radius: 1px;
+      animation: barPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes barPulse {
+      0%, 100% { opacity: 0.5; }
+      50%       { opacity: 1; }
+    }
+
+    /* Stagger bar animation delays */
+    .hud-bar:nth-child(1) { height: 40%; animation-delay: 0s;    }
+    .hud-bar:nth-child(2) { height: 65%; animation-delay: 0.15s; }
+    .hud-bar:nth-child(3) { height: 80%; animation-delay: 0.3s;  }
+    .hud-bar:nth-child(4) { height: 55%; animation-delay: 0.45s; }
+    .hud-bar:nth-child(5) { height: 90%; animation-delay: 0.6s;  }
+    .hud-bar:nth-child(6) { height: 70%; animation-delay: 0.75s; }
+
+    /* =============================================
+       MARQUEE TICKER
+    ============================================= */
+    .ticker-wrapper {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+      background: rgba(0,245,212,0.03);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: var(--s7);
+      animation: ticker 30s linear infinite;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s2);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .ticker-item .ticker-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* =============================================
+       SERVICES SECTION
+    ============================================= */
+    #services {
+      padding: var(--s10) 0;
+    }
+
+    .services-header {
+      text-align: center;
+      margin-bottom: var(--s7);
+    }
+
+    .services-header .section-subtitle {
+      margin: var(--s2) auto 0;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--s3);
+    }
+
+    /* Service card */
+    .service-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s var(--ease-out);
+      cursor: default;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--cyan-dim) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .service-card:hover {
+      border-color: var(--border-bright);
+      box-shadow: 0 8px 40px rgba(0, 245, 212, 0.1), 0 0 0 1px var(--border-bright);
+      transform: translateY(-4px);
+    }
+
+    .service-card:hover::before { opacity: 1; }
+
+    .service-card:nth-child(2) { border-color: rgba(168, 85, 247, 0.12); }
+    .service-card:nth-child(2)::before { background: linear-gradient(135deg, var(--violet-dim) 0%, transparent 60%); }
+    .service-card:nth-child(2):hover   { border-color: rgba(168, 85, 247, 0.35); box-shadow: 0 8px 40px rgba(168,85,247,0.1); }
+
+    .service-card:nth-child(3) { border-color: rgba(240, 32, 176, 0.12); }
+    .service-card:nth-child(3)::before { background: linear-gradient(135deg, var(--magenta-dim) 0%, transparent 60%); }
+    .service-card:nth-child(3):hover   { border-color: rgba(240, 32, 176, 0.35); box-shadow: 0 8px 40px rgba(240,32,176,0.1); }
+
+    .service-card:nth-child(4) { border-color: rgba(0, 245, 212, 0.12); }
+
+    /* Card image */
+    .service-img-wrapper {
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .service-img-wrapper::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(to top, var(--bg-surface), transparent);
+    }
+
+    .service-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--ease-out);
+    }
+
+    .service-card:hover .service-img-wrapper img { transform: scale(1.07); }
+
+    /* Card body */
+    .service-body {
+      padding: var(--s3) var(--s4) var(--s4);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+    }
+
+    .service-tag {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      padding: 3px 10px;
+      border: 1px solid var(--border-bright);
+      border-radius: 2px;
+      background: var(--cyan-dim);
+      margin-bottom: var(--s2);
+      align-self: flex-start;
+    }
+
+    .service-card:nth-child(2) .service-tag {
+      color: var(--violet);
+      border-color: rgba(168, 85, 247, 0.35);
+      background: var(--violet-dim);
+    }
+
+    .service-card:nth-child(3) .service-tag {
+      color: var(--magenta);
+      border-color: rgba(240, 32, 176, 0.35);
+      background: var(--magenta-dim);
+    }
+
+    .service-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      color: var(--text-primary);
+      margin-bottom: var(--s1);
+    }
+
+    .service-tagline {
+      font-size: 0.75rem;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+      font-style: italic;
+      margin-bottom: var(--s2);
+    }
+
+    .service-card:nth-child(2) .service-tagline { color: var(--violet); }
+    .service-card:nth-child(3) .service-tagline { color: var(--magenta); }
+
+    .service-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      flex: 1;
+      margin-bottom: var(--s3);
+    }
+
+    .service-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      transition: gap 0.2s;
+    }
+
+    .service-card:nth-child(2) .service-link { color: var(--violet); }
+    .service-card:nth-child(3) .service-link { color: var(--magenta); }
+
+    .service-link:hover { gap: 14px; }
+
+    .service-link svg { transition: transform 0.2s; }
+    .service-link:hover svg { transform: translateX(4px); }
+
+    /* =============================================
+       ABOUT SECTION
+    ============================================= */
+    #about {
+      padding: var(--s10) 0;
+      background: linear-gradient(to bottom, transparent, rgba(0,245,212,0.02), transparent);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s8);
+      align-items: start;
+    }
+
+    .about-image-stack {
+      position: relative;
+    }
+
+    .about-img-main {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .about-img-secondary {
+      position: absolute;
+      bottom: -32px;
+      right: -32px;
+      width: 55%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 3px solid var(--bg-void);
+      outline: 1px solid var(--border-bright);
+    }
+
+    /* Values list */
+    .about-values {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2);
+      margin: var(--s4) 0;
+    }
+
+    .about-value-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--s2);
+      padding: var(--s2) var(--s3);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      border-left: 2px solid var(--cyan);
+      transition: border-left-color 0.2s, background 0.2s;
+    }
+
+    .about-value-item:nth-child(2) { border-left-color: var(--violet); }
+    .about-value-item:nth-child(3) { border-left-color: var(--magenta); }
+
+    .about-value-item:hover { background: rgba(10,20,38,0.95); }
+
+    .value-icon {
+      font-size: 1.2rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .value-text {}
+
+    .value-title {
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .value-desc {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Team sub-section */
+    .team-section {
+      margin-top: var(--s7);
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s3);
+      margin-top: var(--s4);
+    }
+
+    .team-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s var(--ease-out);
+    }
+
+    .team-card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-4px);
+    }
+
+    .team-img-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-img-wrapper img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      object-position: top;
+      transition: transform 0.5s var(--ease-out);
+      filter: grayscale(20%) contrast(1.05);
+    }
+
+    .team-card:hover .team-img-wrapper img {
+      transform: scale(1.05);
+      filter: grayscale(0%);
+    }
+
+    .team-img-wrapper::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40%;
+      background: linear-gradient(to top, var(--bg-surface), transparent);
+    }
+
+    .team-info {
+      padding: var(--s2) var(--s3) var(--s3);
+    }
+
+    .team-name {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+    }
+
+    .team-role {
+      font-size: 0.7rem;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    /* =============================================
+       CONTACT SECTION
+    ============================================= */
+    #contact {
+      padding: var(--s10) 0 var(--s7);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: var(--s7);
+      align-items: start;
+    }
+
+    .contact-info {}
+
+    .contact-info .section-subtitle {
+      margin-bottom: var(--s5);
+    }
+
+    .contact-channels {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s3);
+    }
+
+    .contact-channel {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      padding: var(--s2) var(--s3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg-card);
+      transition: border-color 0.25s;
+    }
+
+    .contact-channel:hover { border-color: var(--border-bright); }
+
+    .channel-icon-wrapper {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--cyan-dim);
+      border: 1px solid var(--border-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .channel-icon-wrapper svg { color: var(--cyan); }
+
+    .channel-details {}
+
+    .channel-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .channel-value {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+
+    /* Contact Form */
+    .contact-form-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: var(--s5);
+      backdrop-filter: blur(10px);
+    }
+
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
+      margin-bottom: var(--s4);
+      padding-bottom: var(--s3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s3);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: var(--s3);
+    }
+
+    .form-group:last-of-type { margin-bottom: 0; }
+
+    .form-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 12px var(--s2);
+      background: rgba(3, 7, 18, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px var(--cyan-dim), 0 0 16px var(--cyan-dim);
+    }
+
+    .form-input.error,
+    .form-textarea.error {
+      border-color: var(--magenta);
+      box-shadow: 0 0 0 3px var(--magenta-dim);
+    }
+
+    .form-textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .form-error {
+      font-size: 0.68rem;
+      color: var(--magenta);
+      letter-spacing: 0.05em;
+      display: none;
+    }
+
+    .form-error.visible { display: block; }
+
+    .form-submit-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: var(--s4);
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: var(--s4);
+    }
+
+    .form-success.visible { display: block; }
+
+    .form-success-icon {
+      font-size: 2rem;
+      margin-bottom: var(--s2);
+    }
+
+    .form-success-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--cyan);
+      margin-bottom: var(--s1);
+    }
+
+    .form-success-sub {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: var(--s6) 0 var(--s4);
+      background: rgba(3, 7, 18, 0.5);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--s6);
+      margin-bottom: var(--s6);
+    }
+
+    .footer-brand .nav-logo {
+      margin-bottom: var(--s2);
+    }
+
+    .footer-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 260px;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: var(--s3);
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s1);
+    }
+
+    .footer-links a {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--cyan); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--s4);
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* =============================================
+       SCROLL REVEAL ANIMATIONS
+    ============================================= */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    }
+
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stagger children */
+    .reveal-stagger > * {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+    }
+
+    .reveal-stagger.revealed > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0s;    }
+    .reveal-stagger.revealed > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.1s;  }
+    .reveal-stagger.revealed > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.2s;  }
+    .reveal-stagger.revealed > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.3s;  }
+    .reveal-stagger.revealed > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.4s;  }
+    .reveal-stagger.revealed > *:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 0.5s;  }
+
+    /* Hero entrance */
+    .hero-badge, .hero-headline, .hero-description, .hero-actions, .hero-stats {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: heroEntrance 0.8s var(--ease-out) forwards;
+    }
+
+    .hero-badge       { animation-delay: 0.2s; }
+    .hero-headline    { animation-delay: 0.35s; }
+    .hero-description { animation-delay: 0.5s; }
+    .hero-actions     { animation-delay: 0.65s; }
+    .hero-stats       { animation-delay: 0.8s; }
+
+    .hero-visual {
+      opacity: 0;
+      transform: translateX(30px);
+      animation: heroVisual 1s var(--ease-out) 0.4s forwards;
+    }
+
+    @keyframes heroEntrance {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes heroVisual {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* =============================================
+       SCAN-LINE EFFECT (decorative)
+    ============================================= */
+    .scanline-overlay {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      opacity: 0.4;
+    }
+
+    /* =============================================
+       RESPONSIVE — TABLET (max 1024px)
+    ============================================= */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; gap: var(--s6); }
+      .hero-headline { font-size: clamp(2rem, 6vw, 3rem); }
+      .hero-image-wrapper img { height: 380px; }
+      .hero-hud-2 { right: 0; }
+
+      .about-grid { grid-template-columns: 1fr; gap: var(--s6); }
+      .about-image-stack { max-width: 500px; }
+      .about-img-secondary { right: 0; bottom: -20px; }
+
+      .contact-grid { grid-template-columns: 1fr; }
+
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--s4); }
+    }
+
+    /* =============================================
+       RESPONSIVE — MOBILE (max 768px)
+    ============================================= */
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+
+      .services-grid { grid-template-columns: 1fr; }
+
+      .team-grid { grid-template-columns: 1fr; max-width: 320px; }
+
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: var(--s2); text-align: center; }
+
+      .hero-stats { gap: var(--s4); }
+      .hero-hud-1, .hero-hud-2 { display: none; }
+
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* =============================================
+       REDUCED MOTION
+    ============================================= */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =============================================
+       AMBIENT & DECORATIVE LAYERS
+  ============================================= -->
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+  <div class="scanline-overlay" aria-hidden="true"></div>
+
+  <!-- =============================================
+       NAVIGATION
+  ============================================= -->
+  <nav id="nav" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <div class="nav-inner">
+
+        <!-- Logo -->
+        <a href="#hero" class="nav-logo" aria-label="NeuroLink Systems — Home">
+          <div class="nav-logo-icon" aria-hidden="true">
+            <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="3" fill="#00f5d4"/>
+              <circle cx="6"  cy="8"  r="2" fill="#00f5d4" opacity="0.7"/>
+              <circle cx="30" cy="8"  r="2" fill="#00f5d4" opacity="0.7"/>
+              <circle cx="6"  cy="28" r="2" fill="#a855f7" opacity="0.7"/>
+              <circle cx="30" cy="28" r="2" fill="#a855f7" opacity="0.7"/>
+              <line x1="18" y1="18" x2="6"  y2="8"  stroke="#00f5d4" stroke-width="1" opacity="0.5"/>
+              <line x1="18" y1="18" x2="30" y2="8"  stroke="#00f5d4" stroke-width="1" opacity="0.5"/>
+              <line x1="18" y1="18" x2="6"  y2="28" stroke="#a855f7" stroke-width="1" opacity="0.5"/>
+              <line x1="18" y1="18" x2="30" y2="28" stroke="#a855f7" stroke-width="1" opacity="0.5"/>
+              <circle cx="18" cy="18" r="8" stroke="#00f5d4" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.4"/>
+            </svg>
+          </div>
+          <span>Neuro<span class="logo-text-accent">Link</span></span>
+        </a>
+
+        <!-- Desktop links -->
+        <ul class="nav-links" role="list">
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <!-- Desktop CTA -->
+        <a href="#contact" class="nav-cta" aria-label="Request a demo">
+          Request Demo
+        </a>
+
+        <!-- Mobile hamburger -->
+        <button class="nav-hamburger" id="hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile nav dropdown -->
+  <div class="nav-mobile" id="mobileMenu" aria-label="Mobile navigation">
+    <ul role="list">
+      <li><a href="#hero"     class="mobile-link">Home</a></li>
+      <li><a href="#services" class="mobile-link">Services</a></li>
+      <li><a href="#about"    class="mobile-link">About</a></li>
+      <li><a href="#contact"  class="mobile-link">Contact</a></li>
+    </ul>
+  </div>
+
+  <main>
+
+    <!-- =============================================
+         HERO SECTION
+    ============================================= -->
+    <section id="hero" aria-labelledby="hero-headline">
+      <div class="container">
+        <div class="hero-grid">
+
+          <!-- Text column -->
+          <div class="hero-text">
+            <div class="hero-badge" aria-hidden="true">
+              <span class="badge-dot"></span>
+              System Online — Live Analytics Active
+            </div>
+
+            <h1 class="hero-headline" id="hero-headline">
+              <span class="line-dim">Intelligence</span><br>
+              <span class="line-accent">Rewired</span><br>
+              <span class="line-dim">for the</span><br>
+              <span>Enterprise.</span>
+            </h1>
+
+            <p class="hero-description">
+              NeuroLink Systems delivers real-time cognitive data dashboards that transform complex enterprise signals into decisive action. AI analytics — engineered for those who move first.
+            </p>
+
+            <div class="hero-actions">
+              <a href="#contact" class="btn-primary" aria-label="Get started with NeuroLink Systems">
+                Get Started
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+              <a href="#services" class="btn-secondary" aria-label="Explore our services">
+                Explore Services
+              </a>
+            </div>
+
+            <div class="hero-stats" aria-label="Key statistics">
+              <div class="hero-stat">
+                <div class="stat-value">340+</div>
+                <div class="stat-label">Enterprise Clients</div>
+              </div>
+              <div class="hero-stat">
+                <div class="stat-value">99.97%</div>
+                <div class="stat-label">Uptime SLA</div>
+              </div>
+              <div class="hero-stat">
+                <div class="stat-value">2.4ms</div>
+                <div class="stat-label">Avg. Latency</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visual column -->
+          <div class="hero-visual" aria-hidden="true">
+            <div class="hero-image-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80&auto=format&fit=crop"
+                alt="Abstract circuit board representing AI cognitive infrastructure"
+                loading="eager"
+                width="800"
+                height="480"
+              />
+            </div>
+
+            <!-- HUD card 1 — bottom left -->
+            <div class="hero-hud hero-hud-1">
+              <div class="hud-label">Cognitive Throughput</div>
+              <div class="hud-value">18.4K <span style="font-size:0.7rem; color: var(--text-muted)">events/s</span></div>
+              <div class="hud-sparkline" role="img" aria-label="Data throughput bar chart">
+                <div class="hud-bar" style="height:40%;background:var(--cyan-dim);border-top:1px solid var(--cyan)"></div>
+                <div class="hud-bar" style="height:65%;background:var(--cyan-dim);border-top:1px solid var(--cyan)"></div>
+                <div class="hud-bar" style="height:80%;background:var(--cyan-dim);border-top:1px solid var(--cyan)"></div>
+                <div class="hud-bar" style="height:55%;background:var(--cyan-dim);border-top:1px solid var(--cyan)"></div>
+                <div class="hud-bar" style="height:90%;background:var(--cyan-dim);border-top:1px solid var(--cyan)"></div>
+                <div class="hud-bar" style="height:70%;background:var(--cyan-dim);border-top:1px solid var(--cyan)"></div>
+              </div>
+            </div>
+
+            <!-- HUD card 2 — top right -->
+            <div class="hero-hud hero-hud-2">
+              <div class="hud-label">Decision Confidence</div>
+              <div class="hud-value hud-value-violet">94.2%</div>
+              <div style="font-size:0.6rem; color: var(--violet); margin-top:4px; letter-spacing: 0.1em;">▲ +2.1% this cycle</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================
+         TICKER / MARQUEE
+    ============================================= -->
+    <div class="ticker-wrapper" aria-hidden="true" role="presentation">
+      <div class="ticker-track">
+        <!-- Doubled for seamless loop -->
+        <span class="ticker-item"><span class="ticker-dot"></span>Cognitive Infrastructure Design</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Predictive Strategy Labs</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Cyber-Cognitive Security Audits</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Continuous Intelligence Monitoring</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Real-Time Neural Analytics</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Enterprise Decision Systems</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>AI Reasoning Layers</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Adaptive Data Flows</span>
+        <!-- Duplicate -->
+        <span class="ticker-item"><span class="ticker-dot"></span>Cognitive Infrastructure Design</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Predictive Strategy Labs</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Cyber-Cognitive Security Audits</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Continuous Intelligence Monitoring</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Real-Time Neural Analytics</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Enterprise Decision Systems</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>AI Reasoning Layers</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Adaptive Data Flows</span>
+      </div>
+    </div>
+
+    <!-- =============================================
+         SERVICES SECTION
+    ============================================= -->
+    <section id="services" aria-labelledby="services-title">
+      <div class="container">
+
+        <div class="services-header reveal">
+          <div class="section-label">Core Services</div>
+          <h2 class="section-title" id="services-title">
+            The <span>Cognitive Stack</span>
+          </h2>
+          <p class="section-subtitle">
+            Four interlocking disciplines that form a complete intelligence architecture — from design through protection to perpetual awareness.
+          </p>
+        </div>
+
+        <div class="services-grid reveal-stagger">
+
+          <!-- Card 1 — Cognitive Infrastructure Design -->
+          <article class="service-card" tabindex="0">
+            <div class="service-img-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=75&auto=format&fit=crop"
+                alt="Abstract AI neural network visualization representing cognitive infrastructure"
+                loading="lazy"
+                width="600"
+                height="220"
+              />
+            </div>
+            <div class="service-body">
+              <span class="service-tag">Infrastructure</span>
+              <h3 class="service-title">Cognitive Infrastructure Design</h3>
+              <p class="service-tagline">"Architecting the digital brain"</p>
+              <p class="service-desc">
+                NeuroLink doesn't just integrate tools — we design an entire cognitive system for your organization. This includes decision pathways, AI reasoning layers, and adaptive data flows that evolve over time. Installing a synthetic brain inside your enterprise.
+              </p>
+              <a href="#contact" class="service-link" aria-label="Learn more about Cognitive Infrastructure Design">
+                Learn More
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 2 — Predictive Strategy Labs -->
+          <article class="service-card" tabindex="0">
+            <div class="service-img-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=75&auto=format&fit=crop"
+                alt="Futuristic holographic data display representing predictive analytics"
+                loading="lazy"
+                width="600"
+                height="220"
+              />
+            </div>
+            <div class="service-body">
+              <span class="service-tag">Strategy</span>
+              <h3 class="service-title">Predictive Strategy Labs</h3>
+              <p class="service-tagline">"Simulate the future before it happens"</p>
+              <p class="service-desc">
+                A controlled environment where executives test decisions against AI-generated future scenarios. Markets shift, competitors react, systems adapt — all in real time. A decision simulator powered by parallel realities.
+              </p>
+              <a href="#contact" class="service-link" aria-label="Learn more about Predictive Strategy Labs">
+                Learn More
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 3 — Cyber-Cognitive Security Audits -->
+          <article class="service-card" tabindex="0">
+            <div class="service-img-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=75&auto=format&fit=crop"
+                alt="Glowing cybersecurity shield concept representing cognitive security"
+                loading="lazy"
+                width="600"
+                height="220"
+              />
+            </div>
+            <div class="service-body">
+              <span class="service-tag">Security</span>
+              <h3 class="service-title">Cyber-Cognitive Security Audits</h3>
+              <p class="service-tagline">"Protecting the integrity of thought"</p>
+              <p class="service-desc">
+                Beyond cybersecurity — we analyze how AI systems and human decision-makers can be influenced, misled, or manipulated. Defending against data poisoning, behavioral exploits, and decision hacking at the cognitive layer.
+              </p>
+              <a href="#contact" class="service-link" aria-label="Learn more about Cyber-Cognitive Security Audits">
+                Learn More
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 4 — Continuous Intelligence Monitoring -->
+          <article class="service-card" tabindex="0">
+            <div class="service-img-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=75&auto=format&fit=crop"
+                alt="Server infrastructure with glowing lights representing continuous monitoring"
+                loading="lazy"
+                width="600"
+                height="220"
+              />
+            </div>
+            <div class="service-body">
+              <span class="service-tag">Monitoring</span>
+              <h3 class="service-title">Continuous Intelligence Monitoring</h3>
+              <p class="service-tagline">"A living, always-on awareness layer"</p>
+              <p class="service-desc">
+                A 24/7 system where NeuroLink actively monitors cognitive flows across your organization — detecting anomalies, predicting risks, and triggering automated responses. A central AI consciousness watching over operations in real time.
+              </p>
+              <a href="#contact" class="service-link" aria-label="Learn more about Continuous Intelligence Monitoring">
+                Learn More
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================
+         ABOUT SECTION
+    ============================================= -->
+    <section id="about" aria-labelledby="about-title">
+      <div class="container">
+
+        <div class="about-grid">
+
+          <!-- Image stack -->
+          <div class="about-image-stack reveal" aria-hidden="true">
+            <img
+              class="about-img-main"
+              src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=80&auto=format&fit=crop"
+              alt="Team working on advanced AI systems in a modern office environment"
+              loading="lazy"
+              width="600"
+              height="750"
+            />
+            <img
+              class="about-img-secondary"
+              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300&q=80&auto=format&fit=crop"
+              alt="Data analyst reviewing cognitive analytics dashboard"
+              loading="lazy"
+              width="300"
+              height="300"
+            />
+          </div>
+
+          <!-- Text column -->
+          <div class="about-content">
+            <div class="section-label">About NeuroLink</div>
+            <h2 class="section-title reveal" id="about-title">
+              Built to Think<br><span>Alongside You.</span>
+            </h2>
+
+            <p class="section-subtitle reveal">
+              Founded by a team of neuroscientists, engineers, and strategists, NeuroLink Systems was created with one conviction: that enterprise intelligence should be as adaptive and self-aware as the humans who wield it.
+            </p>
+
+            <p class="section-subtitle reveal" style="margin-top: var(--s2);">
+              We believe the future of decision-making is neither purely human nor purely machine — it's a seamless cognitive partnership. Every system we build is designed to augment judgment, not replace it.
+            </p>
+
+            <!-- Values -->
+            <div class="about-values reveal-stagger">
+              <div class="about-value-item">
+                <div class="value-icon" aria-hidden="true">⚡</div>
+                <div class="value-text">
+                  <div class="value-title">Precision Architecture</div>
+                  <div class="value-desc">Every data pathway is engineered with the rigor of aerospace systems — no redundancy left to chance.</div>
+                </div>
+              </div>
+              <div class="about-value-item">
+                <div class="value-icon" aria-hidden="true">🔭</div>
+                <div class="value-text">
+                  <div class="value-title">Long-Horizon Thinking</div>
+                  <div class="value-desc">We optimize for outcomes 10 years ahead, not quarterly reports. Strategy is a long game.</div>
+                </div>
+              </div>
+              <div class="about-value-item">
+                <div class="value-icon" aria-hidden="true">🛡️</div>
+                <div class="value-text">
+                  <div class="value-title">Cognitive Integrity</div>
+                  <div class="value-desc">We never compromise the reliability of decision data. Trust is the foundation every insight is built on.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Team subsection -->
+        <div class="team-section reveal">
+          <div class="section-label">The Team</div>
+          <h3 class="section-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">
+            Minds Behind the <span>Machine</span>
+          </h3>
+
+          <div class="team-grid reveal-stagger">
+
+            <div class="team-card">
+              <div class="team-img-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80&auto=format&fit=crop&crop=face"
+                  alt="Portrait of Dr. Aiden Voss, CEO & Chief Architect"
+                  loading="lazy"
+                  width="400"
+                  height="200"
+                />
+              </div>
+              <div class="team-info">
+                <div class="team-name">Dr. Aiden Voss</div>
+                <div class="team-role">CEO & Chief Architect</div>
+              </div>
+            </div>
+
+            <div class="team-card">
+              <div class="team-img-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80&auto=format&fit=crop&crop=face"
+                  alt="Portrait of Dr. Priya Maran, Head of Cognitive Research"
+                  loading="lazy"
+                  width="400"
+                  height="200"
+                />
+              </div>
+              <div class="team-info">
+                <div class="team-name">Dr. Priya Maran</div>
+                <div class="team-role">Head of Cognitive Research</div>
+              </div>
+            </div>
+
+            <div class="team-card">
+              <div class="team-img-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80&auto=format&fit=crop&crop=face"
+                  alt="Portrait of Marcus Elliot, Director of Security Systems"
+                  loading="lazy"
+                  width="400"
+                  height="200"
+                />
+              </div>
+              <div class="team-info">
+                <div class="team-name">Marcus Elliot</div>
+                <div class="team-role">Director, Security Systems</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============================================
+         CONTACT SECTION
+    ============================================= -->
+    <section id="contact" aria-labelledby="contact-title">
+      <div class="container">
+
+        <div class="contact-grid">
+
+          <!-- Left: info -->
+          <div class="contact-info reveal">
+            <div class="section-label">Get in Touch</div>
+            <h2 class="section-title" id="contact-title">
+              Start Your<br><span>Intelligence</span><br>Journey.
+            </h2>
+            <p class="section-subtitle">
+              Ready to install a cognitive layer inside your organization? Let's map out your architecture together.
+            </p>
+
+            <div class="contact-channels" role="list">
+
+              <div class="contact-channel" role="listitem">
+                <div class="channel-icon-wrapper" aria-hidden="true">
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                <div class="channel-details">
+                  <div class="channel-label">Email</div>
+                  <div class="channel-value">contact@neurolinksystems.ai</div>
+                </div>
+              </div>
+
+              <div class="contact-channel" role="listitem">
+                <div class="channel-icon-wrapper" aria-hidden="true">
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                  </svg>
+                </div>
+                <div class="channel-details">
+                  <div class="channel-label">Phone</div>
+                  <div class="channel-value">+1 (800) NRL-LINK</div>
+                </div>
+              </div>
+
+              <div class="contact-channel" role="listitem">
+                <div class="channel-icon-wrapper" aria-hidden="true">
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                </div>
+                <div class="channel-details">
+                  <div class="channel-label">Headquarters</div>
+                  <div class="channel-value">San Francisco, CA 94105</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right: form -->
+          <div class="contact-form-wrapper reveal">
+            <div class="form-title">Send a Transmission</div>
+
+            <!-- Success state (hidden by default) -->
+            <div class="form-success" id="formSuccess" role="alert" aria-live="polite">
+              <div class="form-success-icon" aria-hidden="true">✓</div>
+              <div class="form-success-title">Signal Received.</div>
+              <p class="form-success-sub">Your message has entered the cognitive stream. A NeuroLink specialist will respond within 24 hours.</p>
+            </div>
+
+            <!-- Form -->
+            <form
+              id="contactForm"
+              novalidate
+              aria-label="Contact form"
+            >
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="fullName">Full Name <span aria-hidden="true">*</span></label>
+                  <input
+                    class="form-input"
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    placeholder="Dr. Jane Smith"
+                    autocomplete="name"
+                    required
+                    aria-required="true"
+                    aria-describedby="fullNameError"
+                  />
+                  <span class="form-error" id="fullNameError" role="alert">Please enter your name.</span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="email">Email Address <span aria-hidden="true">*</span></label>
+                  <input
+                    class="form-input"
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="jane@company.com"
+                    autocomplete="email"
+                    required
+                    aria-required="true"
+                    aria-describedby="emailError"
+                  />
+                  <span class="form-error" id="emailError" role="alert">Please enter a valid email.</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="company">Company / Organization</label>
+                <input
+                  class="form-input"
+                  type="text"
+                  id="company"
+                  name="company"
+                  placeholder="Acme Corp"
+                  autocomplete="organization"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="message">Message <span aria-hidden="true">*</span></label>
+                <textarea
+                  class="form-textarea"
+                  id="message"
+                  name="message"
+                  placeholder="Describe your cognitive infrastructure needs..."
+                  required
+                  aria-required="true"
+                  aria-describedby="messageError"
+                ></textarea>
+                <span class="form-error" id="messageError" role="alert">Please enter a message.</span>
+              </div>
+
+              <div class="form-submit-row">
+                <button type="submit" class="btn-primary" id="submitBtn" aria-label="Send message">
+                  Transmit Message
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Brand column -->
+        <div class="footer-brand">
+          <a href="#hero" class="nav-logo" aria-label="NeuroLink Systems">
+            <div class="nav-logo-icon" aria-hidden="true">
+              <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="18" cy="18" r="3" fill="#00f5d4"/>
+                <circle cx="6"  cy="8"  r="2" fill="#00f5d4" opacity="0.7"/>
+                <circle cx="30" cy="8"  r="2" fill="#00f5d4" opacity="0.7"/>
+                <circle cx="6"  cy="28" r="2" fill="#a855f7" opacity="0.7"/>
+                <circle cx="30" cy="28" r="2" fill="#a855f7" opacity="0.7"/>
+                <line x1="18" y1="18" x2="6"  y2="8"  stroke="#00f5d4" stroke-width="1" opacity="0.5"/>
+                <line x1="18" y1="18" x2="30" y2="8"  stroke="#00f5d4" stroke-width="1" opacity="0.5"/>
+                <line x1="18" y1="18" x2="6"  y2="28" stroke="#a855f7" stroke-width="1" opacity="0.5"/>
+                <line x1="18" y1="18" x2="30" y2="28" stroke="#a855f7" stroke-width="1" opacity="0.5"/>
+                <circle cx="18" cy="18" r="8" stroke="#00f5d4" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.4"/>
+              </svg>
+            </div>
+            <span>Neuro<span class="logo-text-accent">Link</span></span>
+          </a>
+          <p class="footer-desc">
+            Real-time cognitive data dashboards for enterprise decision-making. Intelligence — rewired.
+          </p>
+        </div>
+
+        <!-- Services column -->
+        <div>
+          <div class="footer-col-title">Services</div>
+          <ul class="footer-links" role="list">
+            <li><a href="#services">Cognitive Infrastructure</a></li>
+            <li><a href="#services">Predictive Strategy Labs</a></li>
+            <li><a href="#services">Security Audits</a></li>
+            <li><a href="#services">Intelligence Monitoring</a></li>
+          </ul>
+        </div>
+
+        <!-- Company column -->
+        <div>
+          <div class="footer-col-title">Company</div>
+          <ul class="footer-links" role="list">
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#about">Team</a></li>
+            <li><a href="#contact">Careers</a></li>
+            <li><a href="#contact">Press</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal column -->
+        <div>
+          <div class="footer-col-title">Legal</div>
+          <ul class="footer-links" role="list">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Compliance</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Footer bottom bar -->
+      <div class="footer-bottom">
+        <span>&copy; 2026 NeuroLink Systems, Inc. All rights reserved.</span>
+        <span style="color: var(--text-muted); font-size: 0.68rem;">
+          System Status: <span style="color: var(--cyan);">● Nominal</span>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+    /* -----------------------------------------------
+       1. STICKY NAV — add .scrolled class on scroll
+    ----------------------------------------------- */
+    const nav = document.getElementById('nav');
+
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+
+    /* -----------------------------------------------
+       2. HAMBURGER / MOBILE MENU TOGGLE
+    ----------------------------------------------- */
+    const hamburger   = document.getElementById('hamburger');
+    const mobileMenu  = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    // Close on any mobile link click
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+
+
+    /* -----------------------------------------------
+       3. SCROLL-TRIGGERED REVEAL ANIMATIONS
+       Uses IntersectionObserver for performance
+    ----------------------------------------------- */
+    const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target); // Only animate once
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealEls.forEach(el => observer.observe(el));
+
+
+    /* -----------------------------------------------
+       4. CONTACT FORM VALIDATION & SUBMISSION
+    ----------------------------------------------- */
+    const contactForm = document.getElementById('contactForm');
+    const formSuccess = document.getElementById('formSuccess');
+
+    function validateField(input, errorId) {
+      const error = document.getElementById(errorId);
+      let valid = input.validity.valid;
+
+      if (!valid) {
+        input.classList.add('error');
+        error.classList.add('visible');
+      } else {
+        input.classList.remove('error');
+        error.classList.remove('visible');
+      }
+
+      return valid;
+    }
+
+    // Live validation on blur
+    const fullName = document.getElementById('fullName');
+    const email    = document.getElementById('email');
+    const message  = document.getElementById('message');
+
+    fullName.addEventListener('blur', () => validateField(fullName, 'fullNameError'));
+    email.addEventListener('blur',    () => validateField(email,    'emailError'));
+    message.addEventListener('blur',  () => validateField(message,  'messageError'));
+
+    // Clear error on input
+    [fullName, email, message].forEach(input => {
+      input.addEventListener('input', () => {
+        input.classList.remove('error');
+        document.getElementById(input.id + 'Error')?.classList.remove('visible');
+      });
+    });
+
+    // Form submit handler
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const v1 = validateField(fullName, 'fullNameError');
+      const v2 = validateField(email,    'emailError');
+      const v3 = validateField(message,  'messageError');
+
+      if (v1 && v2 && v3) {
+        // Simulate async submission
+        const btn = document.getElementById('submitBtn');
+        btn.textContent = 'Transmitting...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          contactForm.style.display = 'none';
+          formSuccess.classList.add('visible');
+          formSuccess.focus(); // Accessibility: move focus to success message
+        }, 1200);
+      }
+    });
+
+
+    /* -----------------------------------------------
+       5. ACTIVE NAV LINK ON SCROLL (highlight current section)
+    ----------------------------------------------- */
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          navLinks.forEach(link => {
+            const isActive = link.getAttribute('href') === `#${id}`;
+            link.style.color = isActive ? 'var(--cyan)' : '';
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(s => sectionObserver.observe(s));
+  </script>
+
+</body>
+</html>
