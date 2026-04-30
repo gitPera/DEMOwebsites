@@ -1,0 +1,2558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Chronium — Precision timepieces blending timeless luxury with modern innovation. Redefining the future of horology." />
+  <title>Chronium — The Evolution of Time</title>
+
+  <!-- ============================
+       GOOGLE FONTS
+  ============================= -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================
+       CSS CUSTOM PROPERTIES (DESIGN TOKENS)
+    ============================= */
+    :root {
+      /* Color Palette */
+      --clr-black:       #080808;
+      --clr-dark:        #0E0E0E;
+      --clr-surface:     #141414;
+      --clr-surface-2:   #1A1A1A;
+      --clr-border:      rgba(255,255,255,0.07);
+      --clr-gold:        #C8A96E;
+      --clr-gold-light:  #E2C98A;
+      --clr-gold-dim:    rgba(200,169,110,0.15);
+      --clr-silver:      #9E9FA3;
+      --clr-white:       #F5F4F0;
+      --clr-white-dim:   rgba(245,244,240,0.55);
+      --clr-white-faint: rgba(245,244,240,0.12);
+
+      /* Typography */
+      --font-serif:  'Cormorant Garamond', Georgia, serif;
+      --font-sans:   'Outfit', sans-serif;
+
+      /* Spacing scale (8px base) */
+      --sp-1: 8px;
+      --sp-2: 16px;
+      --sp-3: 24px;
+      --sp-4: 32px;
+      --sp-5: 40px;
+      --sp-6: 48px;
+      --sp-8: 64px;
+      --sp-10: 80px;
+      --sp-12: 96px;
+      --sp-16: 128px;
+      --sp-20: 160px;
+
+      /* Transitions */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-fast: 0.25s;
+      --dur-med: 0.55s;
+      --dur-slow: 0.9s;
+
+      /* Layout */
+      --max-w: 1320px;
+      --nav-h: 80px;
+    }
+
+    /* ============================
+       RESET & BASE
+    ============================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      background-color: var(--clr-black);
+      color: var(--clr-white);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+      cursor: none; /* custom cursor */
+    }
+
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: none; font-family: var(--font-sans); }
+    ul { list-style: none; }
+
+    /* ============================
+       CUSTOM CURSOR
+    ============================= */
+    #cursor-dot {
+      position: fixed;
+      top: 0; left: 0;
+      width: 8px; height: 8px;
+      background: var(--clr-gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, background 0.3s;
+    }
+    #cursor-ring {
+      position: fixed;
+      top: 0; left: 0;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(200,169,110,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s var(--ease-out),
+                  height 0.3s var(--ease-out),
+                  border-color 0.3s,
+                  transform 0.12s;
+    }
+    body.cursor-hover #cursor-dot  { transform: translate(-50%,-50%) scale(1.8); }
+    body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: var(--clr-gold); }
+
+    /* ============================
+       PAGE LOADER
+    ============================= */
+    #loader {
+      position: fixed; inset: 0;
+      background: var(--clr-black);
+      z-index: 10000;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      gap: var(--sp-3);
+      transition: opacity 0.8s var(--ease-out), visibility 0.8s;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--clr-gold);
+    }
+    .loader-bar-track {
+      width: 200px; height: 1px;
+      background: var(--clr-white-faint);
+      position: relative; overflow: hidden;
+    }
+    .loader-bar-fill {
+      position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, var(--clr-gold), transparent);
+      animation: loaderSweep 1.4s var(--ease-out) forwards;
+    }
+    @keyframes loaderSweep { to { left: 100%; } }
+
+    /* ============================
+       NAVIGATION
+    ============================= */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 900;
+      display: flex; align-items: center;
+      padding: 0 var(--sp-8);
+      transition: background 0.5s var(--ease-out),
+                  border-bottom 0.5s;
+    }
+    #nav.scrolled {
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .nav-inner {
+      width: 100%; max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--clr-gold);
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex; gap: var(--sp-5); align-items: center;
+    }
+    .nav-links a {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clr-white-dim);
+      position: relative;
+      transition: color var(--dur-fast);
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--clr-gold);
+      transition: width var(--dur-med) var(--ease-out);
+    }
+    .nav-links a:hover { color: var(--clr-white); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 10px 24px;
+      border: 1px solid var(--clr-gold);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+      background: transparent;
+      position: relative;
+      overflow: hidden;
+      transition: color var(--dur-fast);
+    }
+    .nav-cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--clr-gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--dur-med) var(--ease-out);
+      z-index: -1;
+    }
+    .nav-cta:hover { color: var(--clr-black); }
+    .nav-cta:hover::before { transform: scaleX(1); }
+
+    /* Mobile hamburger */
+    .nav-burger {
+      display: none;
+      flex-direction: column; gap: 6px;
+      background: none; border: none;
+      padding: 4px; cursor: none;
+    }
+    .nav-burger span {
+      display: block; width: 26px; height: 1px;
+      background: var(--clr-white);
+      transition: transform var(--dur-med), opacity var(--dur-fast);
+    }
+    .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile menu */
+    .nav-mobile {
+      position: fixed; inset: 0; top: var(--nav-h);
+      background: rgba(8,8,8,0.98);
+      backdrop-filter: blur(20px);
+      z-index: 800;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: var(--sp-5);
+      opacity: 0; visibility: hidden;
+      transition: opacity var(--dur-med), visibility var(--dur-med);
+    }
+    .nav-mobile.open { opacity: 1; visibility: visible; }
+    .nav-mobile a {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--clr-white-dim);
+      transition: color var(--dur-fast);
+    }
+    .nav-mobile a:hover { color: var(--clr-gold); }
+
+    /* ============================
+       SECTION UTILITIES
+    ============================= */
+    section { position: relative; overflow: hidden; }
+
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--sp-8);
+    }
+
+    /* Scroll-reveal base state */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity var(--dur-slow) var(--ease-out),
+                  transform var(--dur-slow) var(--ease-out);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: opacity var(--dur-slow) var(--ease-out),
+                  transform var(--dur-slow) var(--ease-out);
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: opacity var(--dur-slow) var(--ease-out),
+                  transform var(--dur-slow) var(--ease-out);
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* Staggered delay helpers */
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.35s; }
+    .delay-4 { transition-delay: 0.5s; }
+    .delay-5 { transition-delay: 0.65s; }
+
+    /* Section label */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+      margin-bottom: var(--sp-3);
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block; width: 32px; height: 1px;
+      background: var(--clr-gold);
+    }
+
+    /* Gold divider */
+    .divider {
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, var(--clr-gold), transparent);
+      margin: var(--sp-3) 0;
+    }
+
+    /* ============================
+       1. HERO SECTION
+    ============================= */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      background: var(--clr-black);
+      position: relative;
+    }
+
+    /* Animated background: concentric rings */
+    .hero-bg {
+      position: absolute; inset: 0;
+      overflow: hidden;
+    }
+    .hero-bg-img {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=1800&q=80');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.08);
+      transition: transform 8s ease;
+      filter: brightness(0.35) saturate(0.6);
+    }
+    #hero:hover .hero-bg-img { transform: scale(1.02); }
+
+    /* Radial gradient overlay */
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%,
+        rgba(200,169,110,0.05) 0%,
+        transparent 60%),
+        linear-gradient(to bottom,
+          rgba(8,8,8,0.2) 0%,
+          rgba(8,8,8,0.5) 60%,
+          var(--clr-black) 100%);
+    }
+
+    /* Animated ring decorations */
+    .hero-ring {
+      position: absolute; border-radius: 50%;
+      border: 1px solid rgba(200,169,110,0.08);
+      animation: ringPulse 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hero-ring:nth-child(1) {
+      width: 600px; height: 600px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 0s;
+    }
+    .hero-ring:nth-child(2) {
+      width: 900px; height: 900px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 1s;
+    }
+    .hero-ring:nth-child(3) {
+      width: 1200px; height: 1200px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 2s;
+    }
+    @keyframes ringPulse {
+      0%, 100% { opacity: 0.3; transform: translate(-50%,-50%) scale(1); }
+      50% { opacity: 0.6; transform: translate(-50%,-50%) scale(1.02); }
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 0 var(--sp-8) var(--sp-16);
+      max-width: var(--max-w);
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+      margin-bottom: var(--sp-3);
+      opacity: 0;
+      animation: fadeSlideUp 0.8s 0.5s var(--ease-out) forwards;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3.5rem, 9vw, 9rem);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-4);
+      opacity: 0;
+      animation: fadeSlideUp 0.9s 0.7s var(--ease-out) forwards;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--clr-gold);
+    }
+
+    .hero-sub {
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      font-weight: 200;
+      letter-spacing: 0.08em;
+      color: var(--clr-white-dim);
+      max-width: 480px;
+      margin-bottom: var(--sp-6);
+      opacity: 0;
+      animation: fadeSlideUp 0.9s 0.9s var(--ease-out) forwards;
+    }
+
+    .hero-actions {
+      display: flex; align-items: center; gap: var(--sp-4);
+      opacity: 0;
+      animation: fadeSlideUp 0.9s 1.1s var(--ease-out) forwards;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 16px 36px;
+      background: var(--clr-gold);
+      color: var(--clr-black);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      border: none;
+      position: relative; overflow: hidden;
+      transition: box-shadow var(--dur-fast);
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--clr-gold-light);
+      transform: translateX(-101%);
+      transition: transform var(--dur-med) var(--ease-out);
+    }
+    .btn-primary:hover { box-shadow: 0 8px 40px rgba(200,169,110,0.3); }
+    .btn-primary:hover::after { transform: translateX(0); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 36px;
+      border: 1px solid var(--clr-white-faint);
+      color: var(--clr-white-dim);
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: transparent;
+      transition: border-color var(--dur-fast), color var(--dur-fast);
+    }
+    .btn-ghost:hover {
+      border-color: var(--clr-gold);
+      color: var(--clr-gold);
+    }
+
+    /* Arrow icon inline SVG via pseudo  */
+    .arrow-icon {
+      display: inline-block;
+      width: 16px; height: 16px;
+      position: relative; flex-shrink: 0;
+    }
+    .arrow-icon::before, .arrow-icon::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+    }
+    .arrow-icon::before {
+      width: 100%; height: 1px;
+      top: 50%; left: 0;
+    }
+    .arrow-icon::after {
+      width: 7px; height: 1px;
+      top: 50%; right: 0;
+      transform: rotate(45deg) translate(1px, -3px);
+    }
+
+    /* Scroll indicator */
+    .hero-scroll {
+      position: absolute; bottom: var(--sp-5); left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0;
+      animation: fadeIn 1s 1.5s forwards;
+    }
+    .hero-scroll-text {
+      font-size: 0.62rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--clr-white-dim);
+    }
+    .hero-scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--clr-gold), transparent);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0% { transform: scaleY(0); transform-origin: top; opacity: 1; }
+      50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      51% { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+
+    /* Ticker bar */
+    .hero-ticker {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 48px;
+      background: rgba(200,169,110,0.06);
+      border-top: 1px solid var(--clr-border);
+      overflow: hidden;
+      z-index: 2;
+    }
+    .ticker-track {
+      display: flex; align-items: center;
+      height: 100%;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+    }
+    .ticker-item {
+      display: inline-flex; align-items: center; gap: var(--sp-4);
+      padding: 0 var(--sp-5);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+    }
+    .ticker-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--clr-gold);
+      flex-shrink: 0;
+    }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    /* ============================
+       2. BRAND PHILOSOPHY
+    ============================= */
+    #philosophy {
+      padding: var(--sp-20) 0;
+      background: var(--clr-dark);
+    }
+
+    .philosophy-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-12);
+      align-items: center;
+    }
+
+    .philosophy-visual {
+      position: relative; aspect-ratio: 3/4;
+    }
+    .philosophy-visual-img {
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+    .philosophy-visual-img img {
+      transition: transform 6s var(--ease-out);
+      filter: brightness(0.85) saturate(0.7);
+    }
+    .philosophy-visual:hover .philosophy-visual-img img { transform: scale(1.05); }
+
+    .philosophy-badge {
+      position: absolute;
+      bottom: -20px; right: -20px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: var(--clr-gold);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 12px;
+    }
+    .philosophy-badge-num {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      color: var(--clr-black);
+      line-height: 1;
+    }
+    .philosophy-badge-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--clr-black);
+    }
+
+    .philosophy-text h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-4);
+    }
+    .philosophy-text h2 em { font-style: italic; color: var(--clr-gold); }
+
+    .philosophy-text p {
+      font-size: 0.92rem;
+      color: var(--clr-white-dim);
+      margin-bottom: var(--sp-4);
+      line-height: 1.9;
+    }
+
+    .philosophy-pillars {
+      display: flex; gap: var(--sp-4);
+      margin-top: var(--sp-5);
+    }
+    .pillar {
+      flex: 1;
+      padding: var(--sp-3);
+      border-top: 1px solid var(--clr-border);
+    }
+    .pillar-num {
+      font-family: var(--font-serif);
+      font-size: 0.75rem;
+      color: var(--clr-gold);
+      letter-spacing: 0.2em;
+      margin-bottom: var(--sp-1);
+    }
+    .pillar-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--clr-white);
+      margin-bottom: 6px;
+    }
+    .pillar-desc {
+      font-size: 0.78rem;
+      color: var(--clr-white-dim);
+      line-height: 1.7;
+    }
+
+    /* ============================
+       3. FEATURED COLLECTION
+    ============================= */
+    #collection {
+      padding: var(--sp-20) 0;
+      background: var(--clr-black);
+    }
+
+    .collection-header {
+      text-align: center;
+      margin-bottom: var(--sp-10);
+    }
+    .collection-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      color: var(--clr-white);
+    }
+    .collection-header p {
+      margin-top: var(--sp-2);
+      font-size: 0.9rem;
+      color: var(--clr-white-dim);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-3);
+    }
+
+    .watch-card {
+      position: relative;
+      background: var(--clr-surface);
+      overflow: hidden;
+      border: 1px solid var(--clr-border);
+      transition: border-color var(--dur-med);
+      cursor: none;
+    }
+    .watch-card:hover { border-color: rgba(200,169,110,0.3); }
+
+    .watch-card-img {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      position: relative;
+    }
+    .watch-card-img img {
+      transition: transform 0.8s var(--ease-out);
+      filter: brightness(0.9) saturate(0.8);
+    }
+    .watch-card:hover .watch-card-img img { transform: scale(1.08); }
+
+    .watch-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(8,8,8,0.95) 0%,
+        rgba(8,8,8,0.5) 40%,
+        transparent 70%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: var(--sp-4);
+    }
+
+    .watch-card-specs {
+      display: flex; gap: var(--sp-2);
+      margin-bottom: var(--sp-2);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity var(--dur-med), transform var(--dur-med) var(--ease-out);
+    }
+    .watch-card:hover .watch-card-specs { opacity: 1; transform: translateY(0); }
+    .spec-tag {
+      padding: 4px 10px;
+      border: 1px solid rgba(200,169,110,0.4);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+    }
+
+    .watch-card-name {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--clr-white);
+      margin-bottom: 4px;
+    }
+    .watch-card-ref {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--clr-white-dim);
+      margin-bottom: var(--sp-3);
+    }
+    .watch-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .watch-card-price {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--clr-gold);
+    }
+    .watch-card-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px;
+      border: 1px solid var(--clr-gold);
+      color: var(--clr-gold);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: transparent;
+      transition: background var(--dur-fast), color var(--dur-fast);
+    }
+    .watch-card-btn:hover {
+      background: var(--clr-gold);
+      color: var(--clr-black);
+    }
+
+    /* Horizontal scroll on mobile */
+    @media (max-width: 900px) {
+      .collection-grid {
+        grid-template-columns: repeat(3, 80vw);
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: var(--sp-3);
+        scrollbar-width: none;
+        gap: var(--sp-2);
+      }
+      .collection-grid::-webkit-scrollbar { display: none; }
+      .watch-card { scroll-snap-align: center; }
+    }
+
+    /* ============================
+       4. TECHNOLOGY & CRAFTSMANSHIP
+    ============================= */
+    #technology {
+      padding: var(--sp-20) 0;
+      background: var(--clr-surface);
+    }
+
+    .tech-header {
+      text-align: center;
+      margin-bottom: var(--sp-12);
+    }
+    .tech-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      color: var(--clr-white);
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--clr-border);
+      border: 1px solid var(--clr-border);
+    }
+
+    .tech-item {
+      background: var(--clr-surface);
+      padding: var(--sp-8);
+      position: relative;
+      overflow: hidden;
+      transition: background var(--dur-med);
+    }
+    .tech-item::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--clr-gold);
+      transition: width 0.6s var(--ease-out);
+    }
+    .tech-item:hover { background: var(--clr-surface-2); }
+    .tech-item:hover::before { width: 100%; }
+
+    .tech-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 1px solid var(--clr-gold);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: var(--sp-3);
+      position: relative;
+    }
+    .tech-icon svg { width: 22px; height: 22px; }
+
+    .tech-num {
+      position: absolute; top: -8px; right: -8px;
+      font-family: var(--font-serif);
+      font-size: 0.65rem;
+      color: var(--clr-gold);
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-gold);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .tech-item h3 {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-2);
+    }
+    .tech-item p {
+      font-size: 0.85rem;
+      color: var(--clr-white-dim);
+      line-height: 1.8;
+      margin-bottom: var(--sp-4);
+    }
+
+    .tech-progress {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .progress-row {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--clr-white-dim);
+    }
+    .progress-track {
+      height: 1px;
+      background: var(--clr-white-faint);
+      position: relative; overflow: hidden;
+    }
+    .progress-fill {
+      position: absolute; top: 0; left: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--clr-gold), var(--clr-gold-light));
+      width: 0;
+      transition: width 1.2s var(--ease-out);
+    }
+    .tech-item.in-view .progress-fill { width: var(--pct); }
+
+    /* ============================
+       5. SIGNATURE EXPERIENCE (PARALLAX)
+    ============================= */
+    #experience {
+      min-height: 100vh;
+      position: relative;
+      display: flex; align-items: center;
+    }
+    .experience-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=1800&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: brightness(0.25) saturate(0.5);
+    }
+    .experience-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg,
+        rgba(8,8,8,0.7) 0%,
+        rgba(200,169,110,0.05) 50%,
+        rgba(8,8,8,0.8) 100%);
+    }
+    .experience-content {
+      position: relative; z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--sp-20) var(--sp-8);
+      text-align: center;
+    }
+    .experience-content h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 7vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-5);
+    }
+    .experience-content h2 em { font-style: italic; color: var(--clr-gold); }
+
+    .experience-blocks {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-5);
+      margin-top: var(--sp-10);
+    }
+    .exp-block {
+      padding: var(--sp-4);
+      border: 1px solid var(--clr-border);
+      background: rgba(8,8,8,0.5);
+      backdrop-filter: blur(10px);
+    }
+    .exp-block-num {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      color: var(--clr-gold);
+      line-height: 1;
+      margin-bottom: var(--sp-2);
+    }
+    .exp-block h4 {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-1);
+    }
+    .exp-block p {
+      font-size: 0.78rem;
+      color: var(--clr-white-dim);
+      line-height: 1.7;
+    }
+
+    /* ============================
+       6. PRODUCT HIGHLIGHT (FLAGSHIP)
+    ============================= */
+    #flagship {
+      padding: var(--sp-20) 0;
+      background: var(--clr-dark);
+      overflow: hidden;
+    }
+
+    .flagship-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-8);
+      align-items: center;
+    }
+
+    .flagship-visual {
+      position: relative;
+    }
+    .flagship-watch-wrap {
+      aspect-ratio: 1;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .flagship-ring-anim {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(200,169,110,0.15);
+      animation: flagRing 4s linear infinite;
+    }
+    .flagship-ring-anim:nth-child(2) {
+      inset: -20px;
+      animation-duration: 6s;
+      animation-direction: reverse;
+    }
+    @keyframes flagRing { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+    .flagship-watch-img {
+      width: 75%; height: 75%;
+      object-fit: contain;
+      filter: drop-shadow(0 40px 80px rgba(200,169,110,0.2));
+      animation: float 5s ease-in-out infinite;
+      position: relative; z-index: 1;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-20px) rotate(2deg); }
+    }
+
+    .flagship-content { padding: var(--sp-4) 0; }
+    .flagship-content h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-3);
+    }
+    .flagship-content h2 em { font-style: italic; color: var(--clr-gold); }
+
+    .flagship-content p {
+      font-size: 0.9rem;
+      color: var(--clr-white-dim);
+      line-height: 1.9;
+      margin-bottom: var(--sp-5);
+    }
+
+    .flagship-specs {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-6);
+    }
+    .flag-spec {
+      padding: var(--sp-3);
+      border: 1px solid var(--clr-border);
+      background: var(--clr-surface);
+    }
+    .flag-spec-val {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      color: var(--clr-gold);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .flag-spec-key {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clr-white-dim);
+    }
+
+    /* ============================
+       7. TESTIMONIALS
+    ============================= */
+    #testimonials {
+      padding: var(--sp-20) 0;
+      background: var(--clr-black);
+    }
+
+    .testimonial-header {
+      text-align: center;
+      margin-bottom: var(--sp-10);
+    }
+    .testimonial-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      color: var(--clr-white);
+    }
+
+    .testimonials-carousel {
+      position: relative;
+      overflow: hidden;
+    }
+    .testimonials-track {
+      display: flex;
+      transition: transform 0.7s var(--ease-in-out);
+    }
+    .testimonial-slide {
+      min-width: 100%;
+      padding: 0 var(--sp-8);
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .testimonial-quote-mark {
+      font-family: var(--font-serif);
+      font-size: 6rem;
+      color: var(--clr-gold);
+      line-height: 0.5;
+      margin-bottom: var(--sp-4);
+      opacity: 0.4;
+    }
+    .testimonial-text {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2.5vw, 1.9rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--clr-white);
+      max-width: 700px;
+      line-height: 1.6;
+      margin-bottom: var(--sp-5);
+    }
+    .testimonial-author-img {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-bottom: var(--sp-2);
+      border: 2px solid var(--clr-gold);
+    }
+    .testimonial-author-name {
+      font-size: 0.82rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clr-white);
+      margin-bottom: 4px;
+    }
+    .testimonial-author-role {
+      font-size: 0.72rem;
+      color: var(--clr-gold);
+    }
+
+    .carousel-controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--sp-3);
+      margin-top: var(--sp-6);
+    }
+    .carousel-btn {
+      width: 44px; height: 44px;
+      border: 1px solid var(--clr-border);
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color var(--dur-fast), background var(--dur-fast);
+      cursor: none;
+    }
+    .carousel-btn:hover {
+      border-color: var(--clr-gold);
+      background: var(--clr-gold-dim);
+    }
+    .carousel-btn svg { width: 16px; height: 16px; stroke: var(--clr-white-dim); }
+    .carousel-btn:hover svg { stroke: var(--clr-gold); }
+
+    .carousel-dots {
+      display: flex; gap: 8px;
+    }
+    .carousel-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--clr-white-faint);
+      transition: background var(--dur-fast), transform var(--dur-fast);
+      cursor: none;
+    }
+    .carousel-dot.active {
+      background: var(--clr-gold);
+      transform: scale(1.4);
+    }
+
+    /* ============================
+       8. CONTACT
+    ============================= */
+    #contact {
+      padding: var(--sp-20) 0;
+      background: var(--clr-surface);
+    }
+
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-12);
+      align-items: start;
+    }
+
+    .contact-info h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-4);
+    }
+    .contact-info h2 em { font-style: italic; color: var(--clr-gold); }
+
+    .contact-info p {
+      font-size: 0.88rem;
+      color: var(--clr-white-dim);
+      line-height: 1.9;
+      margin-bottom: var(--sp-6);
+    }
+
+    .contact-details {
+      display: flex; flex-direction: column; gap: var(--sp-3);
+    }
+    .contact-detail-row {
+      display: flex; gap: var(--sp-3); align-items: flex-start;
+    }
+    .contact-detail-icon {
+      width: 40px; height: 40px;
+      border: 1px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-detail-icon svg { width: 16px; height: 16px; stroke: var(--clr-gold); }
+    .contact-detail-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+      margin-bottom: 3px;
+    }
+    .contact-detail-val {
+      font-size: 0.85rem;
+      color: var(--clr-white-dim);
+    }
+
+    /* FORM */
+    .contact-form {
+      display: flex; flex-direction: column; gap: var(--sp-3);
+    }
+
+    .form-group {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .form-group label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--clr-white-dim);
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      color: var(--clr-white);
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 300;
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color var(--dur-fast);
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--clr-gold);
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(245,244,240,0.2);
+    }
+    .form-group textarea { min-height: 130px; }
+
+    .form-group select option { background: var(--clr-surface); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+
+    .form-error {
+      display: none;
+      font-size: 0.7rem;
+      color: #e87070;
+      margin-top: 4px;
+    }
+    .form-group.error input,
+    .form-group.error textarea { border-color: #e87070; }
+    .form-group.error .form-error { display: block; }
+
+    .form-success {
+      display: none;
+      padding: var(--sp-4);
+      border: 1px solid var(--clr-gold);
+      background: var(--clr-gold-dim);
+      text-align: center;
+    }
+    .form-success.show { display: block; }
+    .form-success p {
+      font-size: 0.85rem;
+      color: var(--clr-gold);
+      letter-spacing: 0.05em;
+    }
+
+    .btn-submit {
+      align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 16px 40px;
+      background: var(--clr-gold);
+      color: var(--clr-black);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      border: none;
+      position: relative; overflow: hidden;
+      transition: box-shadow var(--dur-fast);
+    }
+    .btn-submit::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--clr-gold-light);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--dur-med) var(--ease-out);
+      z-index: 0;
+    }
+    .btn-submit:hover { box-shadow: 0 8px 40px rgba(200,169,110,0.3); }
+    .btn-submit:hover::after { transform: scaleX(1); }
+    .btn-submit span { position: relative; z-index: 1; }
+
+    /* ============================
+       FOOTER
+    ============================= */
+    footer {
+      background: var(--clr-black);
+      border-top: 1px solid var(--clr-border);
+      padding: var(--sp-8) 0 var(--sp-5);
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--sp-8);
+      margin-bottom: var(--sp-8);
+    }
+
+    .footer-brand-logo {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--clr-gold);
+      margin-bottom: var(--sp-3);
+    }
+    .footer-brand-desc {
+      font-size: 0.82rem;
+      color: var(--clr-white-dim);
+      line-height: 1.8;
+      max-width: 280px;
+    }
+
+    .footer-col h5 {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+      margin-bottom: var(--sp-3);
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul a {
+      font-size: 0.82rem;
+      color: var(--clr-white-dim);
+      transition: color var(--dur-fast);
+    }
+    .footer-col ul a:hover { color: var(--clr-white); }
+
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--clr-border);
+      font-size: 0.72rem;
+      color: rgba(245,244,240,0.3);
+    }
+    .footer-socials {
+      display: flex; gap: var(--sp-3);
+    }
+    .footer-socials a {
+      width: 36px; height: 36px;
+      border: 1px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color var(--dur-fast);
+    }
+    .footer-socials a:hover { border-color: var(--clr-gold); }
+    .footer-socials svg { width: 14px; height: 14px; stroke: var(--clr-white-dim); }
+    .footer-socials a:hover svg { stroke: var(--clr-gold); }
+
+    /* ============================
+       SCROLL-TO-TOP BUTTON
+    ============================= */
+    #scroll-top {
+      position: fixed; bottom: var(--sp-4); right: var(--sp-4);
+      width: 48px; height: 48px;
+      background: var(--clr-gold);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden;
+      transform: translateY(20px);
+      transition: opacity var(--dur-fast), visibility var(--dur-fast), transform var(--dur-fast);
+      z-index: 800;
+      cursor: none;
+    }
+    #scroll-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+    #scroll-top svg { width: 18px; height: 18px; stroke: var(--clr-black); }
+
+    /* ============================
+       RESPONSIVE
+    ============================= */
+    @media (max-width: 1100px) {
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: var(--sp-5); }
+    }
+
+    @media (max-width: 900px) {
+      :root { --nav-h: 68px; }
+
+      .nav-links, .nav-cta { display: none; }
+      .nav-burger { display: flex; }
+
+      .philosophy-inner { grid-template-columns: 1fr; }
+      .philosophy-visual { max-width: 480px; margin: 0 auto; }
+      .philosophy-badge { bottom: -10px; right: 0; }
+
+      .tech-grid { grid-template-columns: 1fr; }
+
+      .experience-blocks { grid-template-columns: 1fr; gap: var(--sp-3); }
+
+      .flagship-inner { grid-template-columns: 1fr; }
+      .flagship-visual { max-width: 400px; margin: 0 auto; }
+      .flagship-watch-img { width: 85%; height: 85%; }
+
+      .contact-inner { grid-template-columns: 1fr; }
+
+      .footer-inner { grid-template-columns: 1fr; gap: var(--sp-4); }
+      .footer-bottom { flex-direction: column; gap: var(--sp-3); text-align: center; }
+
+      #cursor-dot, #cursor-ring { display: none; }
+      body { cursor: auto; }
+      button { cursor: pointer; }
+      .nav-burger { cursor: pointer; }
+      .carousel-btn, .carousel-dot { cursor: pointer; }
+      .watch-card { cursor: pointer; }
+      #scroll-top { cursor: pointer; }
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 0 var(--sp-3); }
+      #nav { padding: 0 var(--sp-3); }
+      .hero-content { padding: 0 var(--sp-3) var(--sp-12); }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+      .philosophy-pillars { flex-direction: column; }
+      .flagship-specs { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ============================
+       GRAIN TEXTURE OVERLAY (luxury feel)
+    ============================= */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9990;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================
+       PAGE LOADER
+  ============================= -->
+  <div id="loader" aria-hidden="true">
+    <div class="loader-logo">CHRONIUM</div>
+    <div class="loader-bar-track">
+      <div class="loader-bar-fill"></div>
+    </div>
+  </div>
+
+  <!-- ============================
+       CUSTOM CURSOR
+  ============================= -->
+  <div id="cursor-dot" aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+
+  <!-- ============================
+       SCROLL TO TOP
+  ============================= -->
+  <button id="scroll-top" aria-label="Scroll to top" title="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </button>
+
+  <!-- ============================
+       NAVIGATION
+  ============================= -->
+  <header>
+    <nav id="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-inner">
+        <a href="#hero" class="nav-logo" aria-label="Chronium home">CHRONIUM</a>
+
+        <ul class="nav-links" role="list">
+          <li><a href="#philosophy">Philosophy</a></li>
+          <li><a href="#collection">Collection</a></li>
+          <li><a href="#technology">Technology</a></li>
+          <li><a href="#flagship">Flagship</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <a href="#collection" class="nav-cta">
+          Discover <span class="arrow-icon" aria-hidden="true"></span>
+        </a>
+
+        <button class="nav-burger" id="nav-burger" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="nav-mobile" id="nav-mobile" aria-hidden="true" role="dialog">
+      <a href="#philosophy" class="nav-mobile-link">Philosophy</a>
+      <a href="#collection" class="nav-mobile-link">Collection</a>
+      <a href="#technology" class="nav-mobile-link">Technology</a>
+      <a href="#flagship" class="nav-mobile-link">Flagship</a>
+      <a href="#contact" class="nav-mobile-link">Contact</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================
+         1. HERO SECTION
+    ============================= -->
+    <section id="hero" aria-label="Hero">
+      <div class="hero-bg">
+        <div class="hero-bg-img" role="img" aria-label="Luxury watch close-up photography"></div>
+        <div class="hero-gradient" aria-hidden="true"></div>
+        <!-- Decorative rings -->
+        <div class="hero-ring" aria-hidden="true"></div>
+        <div class="hero-ring" aria-hidden="true"></div>
+        <div class="hero-ring" aria-hidden="true"></div>
+      </div>
+
+      <div class="hero-content">
+        <p class="hero-eyebrow">Est. 2018 — Swiss-inspired Innovation</p>
+
+        <h1 class="hero-title">
+          The <em>Evolution</em><br>of Time
+        </h1>
+
+        <p class="hero-sub">
+          Where precision engineering meets timeless elegance.
+          Each piece a testament to human mastery over the fourth dimension.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#collection" class="btn-primary">
+            <span>Explore Collection</span>
+            <span class="arrow-icon" aria-hidden="true"></span>
+          </a>
+          <a href="#flagship" class="btn-ghost">Our Flagship</a>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="hero-scroll" aria-hidden="true">
+        <span class="hero-scroll-text">Scroll</span>
+        <span class="hero-scroll-line"></span>
+      </div>
+
+      <!-- Ticker -->
+      <div class="hero-ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <!-- Items duplicated for seamless loop -->
+          <span class="ticker-item"><span class="ticker-dot"></span>Precision Engineering</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Swiss Movement Technology</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Titanium Grade 5</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Sapphire Crystal Glass</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>300m Water Resistant</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Chronograph Movement</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Handcrafted Excellence</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Precision Engineering</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Swiss Movement Technology</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Titanium Grade 5</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Sapphire Crystal Glass</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>300m Water Resistant</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Chronograph Movement</span>
+          <span class="ticker-item"><span class="ticker-dot"></span>Handcrafted Excellence</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================
+         2. BRAND PHILOSOPHY
+    ============================= -->
+    <section id="philosophy" aria-labelledby="philosophy-heading">
+      <div class="container">
+        <div class="philosophy-inner">
+
+          <!-- Visual -->
+          <div class="philosophy-visual reveal-left">
+            <div class="philosophy-visual-img">
+              <img
+                src="https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=800&q=80"
+                alt="Watchmaker crafting a precision timepiece by hand"
+                loading="lazy"
+              />
+            </div>
+            <div class="philosophy-badge" aria-label="Over 200 master craftsmen">
+              <span class="philosophy-badge-num">200+</span>
+              <span class="philosophy-badge-label">Master<br>Craftsmen</span>
+            </div>
+          </div>
+
+          <!-- Text -->
+          <div class="philosophy-text reveal-right">
+            <p class="section-label">Our Philosophy</p>
+            <h2 id="philosophy-heading">
+              Crafted for<br>those who<br><em>define time</em>
+            </h2>
+            <div class="divider"></div>
+            <p>
+              At Chronium, we believe a timepiece is more than an instrument — it is a
+              philosophical statement. Born from the convergence of Swiss horological tradition
+              and Silicon Valley innovation, each watch is engineered to outlast generations.
+            </p>
+            <p>
+              We source only the rarest materials: aerospace-grade titanium, monocrystalline
+              sapphire, and ceramic composites that defy time itself. Our movements are assembled
+              by hand, each comprising over 300 individual components calibrated to ±1 second per day.
+            </p>
+
+            <div class="philosophy-pillars">
+              <div class="pillar reveal delay-1">
+                <p class="pillar-num">01</p>
+                <h3 class="pillar-title">Precision</h3>
+                <p class="pillar-desc">Every component engineered to atomic tolerances.</p>
+              </div>
+              <div class="pillar reveal delay-2">
+                <p class="pillar-num">02</p>
+                <h3 class="pillar-title">Innovation</h3>
+                <p class="pillar-desc">Tomorrow's technology, worn today on your wrist.</p>
+              </div>
+              <div class="pillar reveal delay-3">
+                <p class="pillar-num">03</p>
+                <h3 class="pillar-title">Legacy</h3>
+                <p class="pillar-desc">Heirlooms engineered to defy centuries.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================
+         3. FEATURED COLLECTION
+    ============================= -->
+    <section id="collection" aria-labelledby="collection-heading">
+      <div class="container">
+        <div class="collection-header reveal">
+          <p class="section-label">Featured Collection</p>
+          <h2 id="collection-heading">The 2025 Atelier Series</h2>
+          <p>Six masterpieces. One obsession with perfection.</p>
+        </div>
+
+        <div class="collection-grid" role="list">
+
+          <!-- Card 1 -->
+          <article class="watch-card reveal delay-1" role="listitem">
+            <div class="watch-card-img">
+              <img
+                src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600&q=80"
+                alt="Chronium Apex — Black titanium chronograph watch"
+                loading="lazy"
+              />
+              <div class="watch-card-overlay">
+                <div class="watch-card-specs">
+                  <span class="spec-tag">Titanium</span>
+                  <span class="spec-tag">Chronograph</span>
+                </div>
+                <h3 class="watch-card-name">Apex</h3>
+                <p class="watch-card-ref">Ref. CR-001-TI</p>
+                <div class="watch-card-footer">
+                  <span class="watch-card-price">$12,400</span>
+                  <button class="watch-card-btn" aria-label="View details for Chronium Apex">
+                    View Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="watch-card reveal delay-2" role="listitem">
+            <div class="watch-card-img">
+              <img
+                src="https://images.unsplash.com/photo-1548171915-e79a380a2a4b?w=600&q=80"
+                alt="Chronium Celestia — Gold-accented dress watch with moon phase"
+                loading="lazy"
+              />
+              <div class="watch-card-overlay">
+                <div class="watch-card-specs">
+                  <span class="spec-tag">Gold PVD</span>
+                  <span class="spec-tag">Moon Phase</span>
+                </div>
+                <h3 class="watch-card-name">Celestia</h3>
+                <p class="watch-card-ref">Ref. CR-002-GP</p>
+                <div class="watch-card-footer">
+                  <span class="watch-card-price">$18,750</span>
+                  <button class="watch-card-btn" aria-label="View details for Chronium Celestia">
+                    View Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="watch-card reveal delay-3" role="listitem">
+            <div class="watch-card-img">
+              <img
+                src="https://images.unsplash.com/photo-1612817288484-6f916006741a?w=600&q=80"
+                alt="Chronium Meridian — Stainless steel sport diver watch"
+                loading="lazy"
+              />
+              <div class="watch-card-overlay">
+                <div class="watch-card-specs">
+                  <span class="spec-tag">Steel</span>
+                  <span class="spec-tag">300m Dive</span>
+                </div>
+                <h3 class="watch-card-name">Meridian</h3>
+                <p class="watch-card-ref">Ref. CR-003-SS</p>
+                <div class="watch-card-footer">
+                  <span class="watch-card-price">$8,900</span>
+                  <button class="watch-card-btn" aria-label="View details for Chronium Meridian">
+                    View Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================
+         4. TECHNOLOGY & CRAFTSMANSHIP
+    ============================= -->
+    <section id="technology" aria-labelledby="technology-heading">
+      <div class="container">
+        <div class="tech-header reveal">
+          <p class="section-label">Technology</p>
+          <h2 id="technology-heading">Engineering the Impossible</h2>
+        </div>
+
+        <div class="tech-grid" role="list">
+
+          <!-- Item 1: Materials -->
+          <div class="tech-item reveal delay-1" role="listitem">
+            <div class="tech-icon" aria-hidden="true">
+              <span class="tech-num">01</span>
+              <!-- Diamond / crystal SVG icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--clr-gold)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2l4 6H8l4-6z"/><path d="M8 8l4 14L4 8h4z"/><path d="M16 8l-4 14 8-14h-4z"/>
+              </svg>
+            </div>
+            <h3>Advanced Materials</h3>
+            <p>
+              Our cases are machined from Grade 5 titanium — twice the strength of steel at
+              40% less weight — paired with monocrystalline sapphire domes resistant to
+              scratches up to 1800 Vickers hardness.
+            </p>
+            <div class="tech-progress" aria-label="Material performance metrics">
+              <div class="progress-row">
+                <div class="progress-label"><span>Scratch Resistance</span><span>98%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:98%"></div></div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label"><span>Tensile Strength</span><span>94%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:94%"></div></div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label"><span>Corrosion Resistance</span><span>99%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:99%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: Movement Precision -->
+          <div class="tech-item reveal delay-2" role="listitem">
+            <div class="tech-icon" aria-hidden="true">
+              <span class="tech-num">02</span>
+              <!-- Gear / cog icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--clr-gold)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+              </svg>
+            </div>
+            <h3>Movement Precision</h3>
+            <p>
+              Our in-house Calibre CRX-7 movement oscillates at 28,800 vph with a 72-hour
+              power reserve. Each movement is COSC-certified, delivering accuracy within
+              ±1 second per day across all temperature ranges.
+            </p>
+            <div class="tech-progress" aria-label="Movement performance metrics">
+              <div class="progress-row">
+                <div class="progress-label"><span>Accuracy ±1s/day</span><span>100%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:100%"></div></div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label"><span>Power Reserve</span><span>88%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:88%"></div></div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label"><span>Vibration Resistance</span><span>96%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:96%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3: Smart Features -->
+          <div class="tech-item reveal delay-3" role="listitem">
+            <div class="tech-icon" aria-hidden="true">
+              <span class="tech-num">03</span>
+              <!-- Wifi / signal icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--clr-gold)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1" fill="var(--clr-gold)"/>
+              </svg>
+            </div>
+            <h3>Smart Integration</h3>
+            <p>
+              Select Chronium models feature embedded NFC authentication chips and
+              Bluetooth Low Energy synchronisation, allowing seamless pairing with
+              the Chronium app for movement telemetry and service reminders.
+            </p>
+            <div class="tech-progress" aria-label="Smart technology metrics">
+              <div class="progress-row">
+                <div class="progress-label"><span>Connectivity Range</span><span>85%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:85%"></div></div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label"><span>Battery Life</span><span>92%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:92%"></div></div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label"><span>Data Encryption</span><span>100%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:100%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4: Sustainability -->
+          <div class="tech-item reveal delay-4" role="listitem">
+            <div class="tech-icon" aria-hidden="true">
+              <span class="tech-num">04</span>
+              <!-- Leaf icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--clr-gold)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17 8C8 10 5.9 16.17 3.82 19.16A1 1 0 004.5 21C9 20 14 19 17 8z"/><path d="M3.82 19.16L9 14"/>
+              </svg>
+            </div>
+            <h3>Sustainable Future</h3>
+            <p>
+              Chronium is carbon-neutral by 2030. We use recycled ocean-plastic straps,
+              ethically-sourced metals, and solar-powered atelier facilities. Each watch
+              ships in 100% biodegradable packaging crafted from pressed cotton rag.
+            </p>
+            <div class="tech-progress" aria-label="Sustainability metrics">
+              <div class="progress-row">
+                <div class="progress-label"><span>Recycled Materials</span><span>72%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:72%"></div></div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label"><span>Carbon Offset</span><span>68%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:68%"></div></div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-label"><span>Renewable Energy</span><span>80%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="--pct:80%"></div></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================
+         5. SIGNATURE EXPERIENCE
+    ============================= -->
+    <section id="experience" aria-labelledby="experience-heading">
+      <div class="experience-bg" role="img" aria-label="Luxury lifestyle photography — mountain vista at dusk"></div>
+      <div class="experience-overlay" aria-hidden="true"></div>
+
+      <div class="experience-content">
+        <p class="section-label reveal" style="justify-content:center">The Experience</p>
+        <h2 id="experience-heading" class="reveal">
+          Not just a watch.<br>A <em>statement</em><br>of who you are.
+        </h2>
+
+        <div class="experience-blocks" role="list">
+          <div class="exp-block reveal delay-1" role="listitem">
+            <div class="exp-block-num" aria-hidden="true">∞</div>
+            <h4>Lifetime Service</h4>
+            <p>Complimentary servicing for the lifetime of every Chronium piece.</p>
+          </div>
+          <div class="exp-block reveal delay-2" role="listitem">
+            <div class="exp-block-num" aria-hidden="true">50</div>
+            <h4>Global Boutiques</h4>
+            <p>Experience Chronium across 50 exclusive boutiques worldwide.</p>
+          </div>
+          <div class="exp-block reveal delay-3" role="listitem">
+            <div class="exp-block-num" aria-hidden="true">7</div>
+            <h4>Bespoke Atelier</h4>
+            <p>Seven dedicated artisans craft each piece to your exact commission.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================
+         6. PRODUCT HIGHLIGHT (FLAGSHIP)
+    ============================= -->
+    <section id="flagship" aria-labelledby="flagship-heading">
+      <div class="container">
+        <div class="flagship-inner">
+
+          <!-- Visual -->
+          <div class="flagship-visual reveal-left">
+            <div class="flagship-watch-wrap" aria-label="Chronium Sovereign flagship watch displayed floating">
+              <div class="flagship-ring-anim" aria-hidden="true"></div>
+              <div class="flagship-ring-anim" aria-hidden="true"></div>
+              <img
+                class="flagship-watch-img"
+                src="https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=700&q=80"
+                alt="Chronium Sovereign — flagship platinum timepiece"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="flagship-content reveal-right">
+            <p class="section-label">Flagship Model</p>
+            <h2 id="flagship-heading">
+              The<br><em>Sovereign</em><br>CR-X1 Platinum
+            </h2>
+            <div class="divider"></div>
+            <p>
+              Our magnum opus. The Sovereign CR-X1 represents the absolute pinnacle of
+              Chronium's watchmaking philosophy — a platinum-cased perpetual calendar
+              tourbillon that required four years of development and over 2,000 hours
+              of hand-finishing per piece.
+            </p>
+
+            <div class="flagship-specs" aria-label="Sovereign watch specifications">
+              <div class="flag-spec">
+                <div class="flag-spec-val">950</div>
+                <div class="flag-spec-key">Platinum Case</div>
+              </div>
+              <div class="flag-spec">
+                <div class="flag-spec-val">72h</div>
+                <div class="flag-spec-key">Power Reserve</div>
+              </div>
+              <div class="flag-spec">
+                <div class="flag-spec-val">586</div>
+                <div class="flag-spec-key">Components</div>
+              </div>
+              <div class="flag-spec">
+                <div class="flag-spec-val">±0.5s</div>
+                <div class="flag-spec-key">Daily Accuracy</div>
+              </div>
+            </div>
+
+            <a href="#contact" class="btn-primary">
+              <span>Request Private Viewing</span>
+              <span class="arrow-icon" aria-hidden="true"></span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================
+         7. TESTIMONIALS
+    ============================= -->
+    <section id="testimonials" aria-labelledby="testimonials-heading">
+      <div class="container">
+        <div class="testimonial-header reveal">
+          <p class="section-label" style="justify-content:center">Testimonials</p>
+          <h2 id="testimonials-heading">Worn by Those Who Lead</h2>
+        </div>
+
+        <div class="testimonials-carousel" role="region" aria-label="Customer testimonials carousel">
+          <div class="testimonials-track" id="testimonials-track">
+
+            <!-- Slide 1 -->
+            <div class="testimonial-slide" role="group" aria-label="Testimonial 1 of 3">
+              <div class="testimonial-quote-mark" aria-hidden="true">"</div>
+              <blockquote class="testimonial-text">
+                The Sovereign is not a purchase — it is an investment in a philosophy.
+                Chronium has redefined what a wristwatch can mean in the 21st century.
+              </blockquote>
+              <div class="testimonial-author-img">
+                <img
+                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=120&q=80"
+                  alt="Portrait of Alexandre Renaud, venture capitalist"
+                  loading="lazy"
+                />
+              </div>
+              <p class="testimonial-author-name">Alexandre Renaud</p>
+              <p class="testimonial-author-role">Venture Capitalist, Geneva</p>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="testimonial-slide" role="group" aria-label="Testimonial 2 of 3">
+              <div class="testimonial-quote-mark" aria-hidden="true">"</div>
+              <blockquote class="testimonial-text">
+                I've worn Chronium's Apex on every expedition from K2 to the Mariana Deep.
+                It has never faltered. That is not a feature — it is a promise kept.
+              </blockquote>
+              <div class="testimonial-author-img">
+                <img
+                  src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&q=80"
+                  alt="Portrait of Dr. Yuki Tanaka, explorer and conservationist"
+                  loading="lazy"
+                />
+              </div>
+              <p class="testimonial-author-name">Dr. Yuki Tanaka</p>
+              <p class="testimonial-author-role">Explorer & Conservationist, Tokyo</p>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="testimonial-slide" role="group" aria-label="Testimonial 3 of 3">
+              <div class="testimonial-quote-mark" aria-hidden="true">"</div>
+              <blockquote class="testimonial-text">
+                There is an exquisite satisfaction in a Chronium — knowing that the same
+                hands that built cathedrals now coax a spring thinner than a human hair
+                into perfection.
+              </blockquote>
+              <div class="testimonial-author-img">
+                <img
+                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&q=80"
+                  alt="Portrait of Sofia Marchetti, architect and design critic"
+                  loading="lazy"
+                />
+              </div>
+              <p class="testimonial-author-name">Sofia Marchetti</p>
+              <p class="testimonial-author-role">Architect & Design Critic, Milan</p>
+            </div>
+
+          </div><!-- /.testimonials-track -->
+
+          <!-- Controls -->
+          <div class="carousel-controls" aria-label="Carousel navigation">
+            <button class="carousel-btn" id="prev-btn" aria-label="Previous testimonial">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+            </button>
+
+            <div class="carousel-dots" role="tablist" aria-label="Testimonial navigation dots">
+              <button class="carousel-dot active" role="tab" aria-selected="true" aria-label="Go to testimonial 1"></button>
+              <button class="carousel-dot" role="tab" aria-selected="false" aria-label="Go to testimonial 2"></button>
+              <button class="carousel-dot" role="tab" aria-selected="false" aria-label="Go to testimonial 3"></button>
+            </div>
+
+            <button class="carousel-btn" id="next-btn" aria-label="Next testimonial">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================
+         8. CONTACT
+    ============================= -->
+    <section id="contact" aria-labelledby="contact-heading">
+      <div class="container">
+        <div class="contact-inner">
+
+          <!-- Info -->
+          <div class="contact-info reveal-left">
+            <p class="section-label">Contact</p>
+            <h2 id="contact-heading">
+              Begin Your<br><em>Chronium</em><br>Journey
+            </h2>
+            <div class="divider"></div>
+            <p>
+              Whether you wish to commission a bespoke piece, arrange a private
+              boutique consultation, or simply enquire about our current collection —
+              our atelier concierge team is at your service.
+            </p>
+
+            <div class="contact-details" aria-label="Contact information">
+              <div class="contact-detail-row">
+                <div class="contact-detail-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="contact-detail-label">Atelier</p>
+                  <p class="contact-detail-val">12 Rue de la Paix, Geneva, Switzerland</p>
+                </div>
+              </div>
+              <div class="contact-detail-row">
+                <div class="contact-detail-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="contact-detail-label">Telephone</p>
+                  <p class="contact-detail-val">+41 22 900 1200</p>
+                </div>
+              </div>
+              <div class="contact-detail-row">
+                <div class="contact-detail-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="contact-detail-label">Email</p>
+                  <p class="contact-detail-val">concierge@chronium.com</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <div class="reveal-right">
+            <form
+              class="contact-form"
+              id="contact-form"
+              novalidate
+              aria-label="Contact form"
+            >
+              <div class="form-row">
+                <div class="form-group" id="fg-name">
+                  <label for="name">Full Name <span aria-hidden="true">*</span></label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Your full name"
+                    autocomplete="name"
+                    required
+                    aria-required="true"
+                    aria-describedby="name-error"
+                  />
+                  <span class="form-error" id="name-error" role="alert">Please enter your full name.</span>
+                </div>
+                <div class="form-group" id="fg-email">
+                  <label for="email">Email Address <span aria-hidden="true">*</span></label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="your@email.com"
+                    autocomplete="email"
+                    required
+                    aria-required="true"
+                    aria-describedby="email-error"
+                  />
+                  <span class="form-error" id="email-error" role="alert">Please enter a valid email.</span>
+                </div>
+              </div>
+
+              <div class="form-group" id="fg-interest">
+                <label for="interest">Area of Interest</label>
+                <select id="interest" name="interest" aria-label="Select area of interest">
+                  <option value="">Select an option</option>
+                  <option value="collection">Featured Collection</option>
+                  <option value="flagship">Sovereign Flagship</option>
+                  <option value="bespoke">Bespoke Commission</option>
+                  <option value="boutique">Boutique Appointment</option>
+                  <option value="other">General Enquiry</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="fg-message">
+                <label for="message">Your Message <span aria-hidden="true">*</span></label>
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Tell us how we may assist you…"
+                  required
+                  aria-required="true"
+                  aria-describedby="message-error"
+                ></textarea>
+                <span class="form-error" id="message-error" role="alert">Please enter a message.</span>
+              </div>
+
+              <div class="form-success" id="form-success" role="status" aria-live="polite">
+                <p>✦ &nbsp;Your enquiry has been received. Our concierge will be in touch within 24 hours.</p>
+              </div>
+
+              <button type="submit" class="btn-submit" aria-label="Submit enquiry form">
+                <span>Send Enquiry</span>
+                <span class="arrow-icon" aria-hidden="true"></span>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================
+       FOOTER
+  ============================= -->
+  <footer role="contentinfo">
+    <div class="container">
+      <div class="footer-inner">
+
+        <!-- Brand -->
+        <div>
+          <div class="footer-brand-logo" aria-label="Chronium">CHRONIUM</div>
+          <p class="footer-brand-desc">
+            Precision timepieces at the intersection of Swiss heritage and
+            technological innovation. Crafted for those who shape the future.
+          </p>
+        </div>
+
+        <!-- Collections -->
+        <div class="footer-col">
+          <h5>Collections</h5>
+          <ul role="list">
+            <li><a href="#collection">Apex Series</a></li>
+            <li><a href="#collection">Celestia Series</a></li>
+            <li><a href="#collection">Meridian Series</a></li>
+            <li><a href="#flagship">Sovereign CR-X1</a></li>
+          </ul>
+        </div>
+
+        <!-- Company -->
+        <div class="footer-col">
+          <h5>Company</h5>
+          <ul role="list">
+            <li><a href="#philosophy">Our Philosophy</a></li>
+            <li><a href="#technology">Technology</a></li>
+            <li><a href="#experience">The Experience</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul role="list">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Authenticity Guarantee</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="footer-bottom">
+        <p>© 2025 Chronium. All rights reserved. Crafted with precision.</p>
+
+        <!-- Social icons -->
+        <div class="footer-socials" aria-label="Social media links">
+          <!-- Instagram -->
+          <a href="#" aria-label="Follow Chronium on Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <!-- Twitter / X -->
+          <a href="#" aria-label="Follow Chronium on X (Twitter)">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+            </svg>
+          </a>
+          <!-- YouTube -->
+          <a href="#" aria-label="Watch Chronium on YouTube">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================
+       JAVASCRIPT
+  ============================= -->
+  <script>
+    /* ============================
+       PAGE LOADER
+    ============================= */
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+      }, 1600);
+    });
+
+    /* ============================
+       CUSTOM CURSOR
+    ============================= */
+    (function () {
+      const dot  = document.getElementById('cursor-dot');
+      const ring = document.getElementById('cursor-ring');
+      if (!dot || !ring) return;
+
+      let mouseX = 0, mouseY = 0;
+      let ringX  = 0, ringY  = 0;
+
+      document.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = mouseX + 'px';
+        dot.style.top  = mouseY + 'px';
+      });
+
+      // Ring follows with slight lag
+      function animateRing() {
+        ringX += (mouseX - ringX) * 0.12;
+        ringY += (mouseY - ringY) * 0.12;
+        ring.style.left = ringX + 'px';
+        ring.style.top  = ringY + 'px';
+        requestAnimationFrame(animateRing);
+      }
+      animateRing();
+
+      // Hover effect on interactive elements
+      const hoverTargets = document.querySelectorAll(
+        'a, button, .watch-card, .tech-item, input, textarea, select'
+      );
+      hoverTargets.forEach(el => {
+        el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+      });
+    })();
+
+    /* ============================
+       STICKY NAV
+    ============================= */
+    (function () {
+      const nav = document.getElementById('nav');
+      const onScroll = () => {
+        nav.classList.toggle('scrolled', window.scrollY > 60);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+
+    /* ============================
+       MOBILE MENU
+    ============================= */
+    (function () {
+      const burger = document.getElementById('nav-burger');
+      const menu   = document.getElementById('nav-mobile');
+      const links  = menu.querySelectorAll('.nav-mobile-link');
+
+      function toggleMenu(open) {
+        burger.classList.toggle('open', open);
+        menu.classList.toggle('open', open);
+        menu.setAttribute('aria-hidden', !open);
+        burger.setAttribute('aria-expanded', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+      }
+
+      burger.addEventListener('click', () => {
+        const isOpen = menu.classList.contains('open');
+        toggleMenu(!isOpen);
+      });
+
+      links.forEach(link => {
+        link.addEventListener('click', () => toggleMenu(false));
+      });
+    })();
+
+    /* ============================
+       SCROLL REVEAL (Intersection Observer)
+    ============================= */
+    (function () {
+      const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+      const techItems = document.querySelectorAll('.tech-item');
+
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+      revealEls.forEach(el => revealObserver.observe(el));
+
+      // Tech items: trigger progress bars
+      const techObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view', 'visible');
+            techObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+
+      techItems.forEach(el => techObserver.observe(el));
+    })();
+
+    /* ============================
+       TESTIMONIALS CAROUSEL
+    ============================= */
+    (function () {
+      const track  = document.getElementById('testimonials-track');
+      const slides = track.querySelectorAll('.testimonial-slide');
+      const dots   = document.querySelectorAll('.carousel-dot');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      let current = 0;
+      let autoTimer;
+
+      function goTo(idx) {
+        current = (idx + slides.length) % slides.length;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => {
+          d.classList.toggle('active', i === current);
+          d.setAttribute('aria-selected', i === current);
+        });
+      }
+
+      function startAuto() {
+        autoTimer = setInterval(() => goTo(current + 1), 5000);
+      }
+      function stopAuto() { clearInterval(autoTimer); }
+
+      prevBtn.addEventListener('click', () => { stopAuto(); goTo(current - 1); startAuto(); });
+      nextBtn.addEventListener('click', () => { stopAuto(); goTo(current + 1); startAuto(); });
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => { stopAuto(); goTo(i); startAuto(); });
+      });
+
+      // Touch/swipe support
+      let touchStartX = 0;
+      track.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) { stopAuto(); goTo(current + (diff > 0 ? 1 : -1)); startAuto(); }
+      });
+
+      startAuto();
+    })();
+
+    /* ============================
+       CONTACT FORM VALIDATION
+    ============================= */
+    (function () {
+      const form    = document.getElementById('contact-form');
+      const success = document.getElementById('form-success');
+
+      function showError(groupId, show) {
+        document.getElementById(groupId).classList.toggle('error', show);
+      }
+
+      function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        let valid = true;
+
+        const name    = form.name.value.trim();
+        const email   = form.email.value.trim();
+        const message = form.message.value.trim();
+
+        showError('fg-name',    !name);
+        showError('fg-email',   !email || !validateEmail(email));
+        showError('fg-message', !message);
+
+        if (!name || !email || !validateEmail(email) || !message) {
+          valid = false;
+        }
+
+        if (valid) {
+          // Show success, reset form
+          success.classList.add('show');
+          form.reset();
+          // Hide after 6s
+          setTimeout(() => success.classList.remove('show'), 6000);
+        }
+      });
+
+      // Clear error on input
+      ['name', 'email', 'message'].forEach(id => {
+        const el = form[id];
+        el.addEventListener('input', () => {
+          document.getElementById('fg-' + id).classList.remove('error');
+        });
+      });
+    })();
+
+    /* ============================
+       SCROLL-TO-TOP BUTTON
+    ============================= */
+    (function () {
+      const btn = document.getElementById('scroll-top');
+      window.addEventListener('scroll', () => {
+        btn.classList.toggle('show', window.scrollY > 600);
+      }, { passive: true });
+      btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
+
+    /* ============================
+       SMOOTH ANCHOR SCROLLING
+       (fallback for browsers without CSS scroll-behavior)
+    ============================= */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
